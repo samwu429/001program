@@ -245,6 +245,8 @@ export function MindMapCanvas({ state, dispatch }: Props) {
       if (e.key !== "Delete" && e.key !== "Backspace") return;
       const t = document.activeElement;
       if (t && (t.tagName === "TEXTAREA" || t.tagName === "INPUT")) return;
+      if (t instanceof HTMLElement && t.isContentEditable) return;
+      if (t instanceof HTMLElement && t.closest("[data-node-editor]")) return;
       e.preventDefault();
       dispatch({ type: "delete/selection" });
     };
@@ -274,6 +276,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
 
   return (
     <div
+      id="mindmap-canvas-wrap"
       ref={wrapRef}
       className={`canvas-wrap${gridMode === "plain" ? " plain" : ""}`}
       onWheel={onWheel}
@@ -364,7 +367,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         {draftStyle && <div className="draft-rect" style={draftStyle} />}
       </div>
       <div className="hint">
-        悬停框上方出现圆角工具条（与框顶之间有很短的透明衔接区，便于移上去点「移动」「选中」「删除」）。用「移动」拖框；选中后出现缩放点。框内空白左键仅选中；框内（非输入区）右键拖线。左键空白拖新框；空白右键或中键拖画布。点连线后 Delete。Ctrl + 滚轮缩放。
+        顶栏第二行为类似 Google Docs 的格式（粗体、颜色、列表、对齐等）；请先在框内点一下再点格式按钮。悬停框上小条可移动/删除。左键空白拖新框；空白右键或中键拖画布。Ctrl + 滚轮缩放。
       </div>
     </div>
   );

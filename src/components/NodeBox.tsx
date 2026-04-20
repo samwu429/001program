@@ -1,6 +1,7 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ResizeHandle } from "../geometry";
 import { resizeNodeBounds } from "../geometry";
+import { sanitizeNodeHtml } from "../formatExec";
 import type { MindNode } from "../types";
 
 const RESIZE_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
@@ -35,6 +36,7 @@ export function NodeBox({
   onDeleteNode,
 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
   const [hoverPinned, setHoverPinned] = useState(false);
   const movedRef = useRef(false);
   const dragActive = useRef(false);
@@ -45,6 +47,25 @@ export function NodeBox({
     ow: number;
     oh: number;
   } | null>(null);
+
+  useEffect(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    if (document.activeElement === el) return;
+    if (el.innerHTML !== node.text) el.innerHTML = node.text || "";
+  }, [node.text]);
+
+  const onEditorInput = useCallback(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    let html = el.innerHTML;
+    const cleaned = sanitizeNodeHtml(html);
+    if (cleaned !== html) {
+      el.innerHTML = cleaned;
+      html = cleaned;
+    }
+    onUpdateText(node.id, html);
+  }, [node.id, onUpdateText]);
 
   const onCardMouseEnter = useCallback(() => {
     setHoverPinned(true);
@@ -130,7 +151,7 @@ export function NodeBox({
         return;
       }
       if (e.button === 0) {
-        if ((e.target as HTMLElement).closest("textarea")) return;
+        if ((e.target as HTMLElement).closest("[data-node-editor]")) return;
         e.stopPropagation();
         onSelect(node.id);
       }
@@ -238,13 +259,20 @@ export function NodeBox({
       </div>
 
       <div className="node-body" onPointerDown={onBodyPointerDown}>
-        <textarea
-          value={node.text}
-          onChange={(e) => onUpdateText(node.id, e.target.value)}
+        <div
+          ref={editorRef}
+          className="node-editor"
+          contentEditable
+          role="textbox"
+          aria-multiline="true"
+          data-node-editor="true"
+          data-placeholder="输入文字…"
+          suppressContentEditableWarning
+          spellCheck
+          onInput={onEditorInput}
           onPointerDown={(e) => {
             if (e.button === 0) e.stopPropagation();
           }}
-          placeholder="输入文字…"
         />
         {node.images.length > 0 && (
           <div className="node-images">

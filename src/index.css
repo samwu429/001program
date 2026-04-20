@@ -290,17 +290,44 @@ body {
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
-.node-card textarea {
+.node-editor {
   flex: 1;
   width: 100%;
   border: none;
-  resize: none;
   outline: none;
   padding: 10px 12px;
   font: inherit;
   background: transparent;
   color: inherit;
   min-height: 44px;
+  overflow: auto;
+  word-break: break-word;
+}
+
+.node-editor:empty::before,
+.node-editor:has(br:only-child)::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.node-editor ul,
+.node-editor ol {
+  margin: 0.25em 0 0.25em 1.25em;
+  padding: 0;
+}
+
+.node-editor h1 {
+  font-size: 1.35em;
+  margin: 0.15em 0;
+}
+.node-editor h2 {
+  font-size: 1.2em;
+  margin: 0.15em 0;
+}
+.node-editor h3 {
+  font-size: 1.08em;
+  margin: 0.15em 0;
 }
 
 .node-images {
@@ -370,6 +397,153 @@ button.toolbar-btn.primary {
 
 button.toolbar-btn.primary:hover {
   filter: brightness(1.05);
+}
+
+/* —— Google Docs 风格第二行格式栏 —— */
+.format-toolbar {
+  background: #edf2fa;
+  border-bottom: 1px solid #c9d6e8;
+  padding: 4px 10px;
+  flex-shrink: 0;
+}
+
+.format-toolbar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 4px;
+}
+
+.ft-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ft-divider {
+  width: 1px;
+  height: 22px;
+  background: #b6c5da;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+.ft-icon-btn,
+.ft-zoom-btn,
+.ft-text-btn,
+.ft-num-btn {
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #1f1f1f;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ft-icon-btn:hover,
+.ft-zoom-btn:hover,
+.ft-text-btn:hover,
+.ft-num-btn:hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: #b6c5da;
+}
+
+.ft-text-btn {
+  min-width: auto;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.ft-strong {
+  font-weight: 800;
+}
+
+.ft-italic {
+  font-style: italic;
+}
+
+.ft-under {
+  text-decoration: underline;
+}
+
+.ft-strike {
+  text-decoration: line-through;
+}
+
+.ft-zoom-label {
+  font-size: 12px;
+  color: #3c4c63;
+  min-width: 40px;
+  text-align: center;
+  user-select: none;
+}
+
+.ft-select {
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #b6c5da;
+  background: #fff;
+  font-size: 12px;
+  padding: 0 6px;
+  color: #1f1f1f;
+  max-width: 140px;
+}
+
+.ft-select--wide {
+  max-width: 120px;
+}
+
+.ft-num-val {
+  font-size: 12px;
+  min-width: 22px;
+  text-align: center;
+  color: #3c4c63;
+  user-select: none;
+}
+
+.ft-color {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ft-color:hover {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.ft-color input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.ft-color-a {
+  font-weight: 700;
+  font-size: 15px;
+  border-bottom: 3px solid #1f1f1f;
+  line-height: 1;
+  padding-bottom: 1px;
+}
+
+.ft-hi-icon {
+  font-size: 11px;
+  color: #64748b;
 }
 
 .link-preview-line {

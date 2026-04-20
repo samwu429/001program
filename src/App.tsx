@@ -114,6 +114,7 @@ export default function App() {
       />
       <Toolbar
         state={state}
+        dispatch={dispatch}
         onInsertImage={onInsertImage}
         onGridMode={onGridMode}
         onFontSize={onFontSize}
