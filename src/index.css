@@ -33,10 +33,13 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
 }
 
 .canvas-wrap {
   flex: 1;
+  min-height: 0;
+  min-width: 0;
   position: relative;
   overflow: hidden;
   touch-action: none;
@@ -85,9 +88,10 @@ body {
   z-index: 1;
 }
 
+/* 不在 SVG 上抢命中：否则整块“空白”其实落在粗透明 stroke 上，左键/右键都到不了 board-hit */
 .edges-svg .hit {
-  pointer-events: stroke;
-  cursor: pointer;
+  pointer-events: none;
+  cursor: inherit;
 }
 
 .edges-svg .visible {
@@ -144,6 +148,7 @@ body {
   width: 100%;
   min-height: 12px;
   flex: 0 0 auto;
+  pointer-events: none;
 }
 
 .node-chrome {

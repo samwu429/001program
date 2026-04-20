@@ -86,11 +86,33 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     };
   }, [dispatch, linkingFromId, viewport]);
 
+  const hitWorld = 10;
+  const pickNearestEdgeId = useCallback(
+    (wx: number, wy: number) => {
+      let best: { id: string; d: number } | null = null;
+      for (const edge of edges) {
+        const a = nodes[edge.from];
+        const b = nodes[edge.to];
+        if (!a || !b) continue;
+        const seg = edgeSegment(a, b, edges, edge);
+        const d = distPointToSegment(wx, wy, seg.x1, seg.y1, seg.x2, seg.y2);
+        if (d <= hitWorld && (!best || d < best.d)) best = { id: edge.id, d };
+      }
+      return best?.id ?? null;
+    },
+    [edges, nodes]
+  );
+
   const onBoardPointerDown = useCallback(
     (e: React.PointerEvent) => {
       if (e.button === 0) {
         e.preventDefault();
         const w = screenToWorld(e.clientX, e.clientY);
+        const edgeId = pickNearestEdgeId(w.x, w.y);
+        if (edgeId) {
+          dispatch({ type: "select/edge", id: edgeId });
+          return;
+        }
         draftPointerId.current = e.pointerId;
         draftAnchor.current = { x1: w.x, y1: w.y };
         dispatch({ type: "draft/start", rect: { x1: w.x, y1: w.y, x2: w.x, y2: w.y } });
@@ -103,7 +125,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       }
     },
-    [dispatch, screenToWorld]
+    [dispatch, pickNearestEdgeId, screenToWorld]
   );
 
   const onBoardPointerMove = useCallback(
@@ -115,7 +137,8 @@ export function MindMapCanvas({ state, dispatch }: Props) {
           rect: { ...draftAnchor.current, x2: w.x, y2: w.y },
         });
       }
-      if (panPointerId.current === e.pointerId && (e.buttons === 2 || e.buttons === 4)) {
+      /* 部分环境下拖右键时 e.buttons 不稳定，只要仍是当前平移指针就继续跟手 */
+      if (panPointerId.current === e.pointerId) {
         dispatch({ type: "pan/move", sx: e.clientX, sy: e.clientY });
       }
     },
@@ -217,15 +240,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     [dispatch, screenToWorld]
   );
 
-  const onEdgePointerDown = useCallback(
-    (edgeId: string, e: React.PointerEvent) => {
-      if (e.button !== 0) return;
-      e.stopPropagation();
-      dispatch({ type: "select/edge", id: edgeId });
-    },
-    [dispatch]
-  );
-
   const draftStyle = useMemo(() => {
     if (!draftRect) return null;
     const { x, y, width, height } = normalizeRect(draftRect);
@@ -254,26 +268,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [dispatch]);
 
-  const hitWorld = 10;
-  const onSvgMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.button !== 0) return;
-      const w = screenToWorld(e.clientX, e.clientY);
-      let best: { id: string; d: number } | null = null;
-      for (const edge of edges) {
-        const a = nodes[edge.from];
-        const b = nodes[edge.to];
-        if (!a || !b) continue;
-        const seg = edgeSegment(a, b, edges, edge);
-        const d = distPointToSegment(w.x, w.y, seg.x1, seg.y1, seg.x2, seg.y2);
-        if (d <= hitWorld && (!best || d < best.d)) best = { id: edge.id, d };
-      }
-      if (best) dispatch({ type: "select/edge", id: best.id });
-      else dispatch({ type: "select/edge", id: null });
-    },
-    [dispatch, edges, nodes, screenToWorld]
-  );
-
   return (
     <div
       id="mindmap-canvas-wrap"
@@ -296,7 +290,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
           onPointerUp={onBoardPointerUp}
           onPointerCancel={onBoardPointerCancel}
         />
-        <svg className="edges-svg" onMouseDown={onSvgMouseDown}>
+        <svg className="edges-svg">
           {edges.map((edge) => {
             const a = nodes[edge.from];
             const b = nodes[edge.to];
@@ -313,7 +307,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
                   y2={seg.y2}
                   stroke="transparent"
                   strokeWidth={18}
-                  onPointerDown={(e) => onEdgePointerDown(edge.id, e)}
                 />
                 <line
                   className="visible"
