@@ -130,7 +130,8 @@ export function MindMapCanvas({ state, dispatch }: Props) {
 
   const onBoardPointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (draftPointerId.current === e.pointerId && e.buttons === 1 && draftAnchor.current) {
+      /* 勿依赖 e.buttons===1：捕获指针后部分环境 move 时 buttons 为 0，拖框会“只能朝一个方向拉” */
+      if (draftPointerId.current === e.pointerId && draftAnchor.current) {
         const w = screenToWorld(e.clientX, e.clientY);
         dispatch({
           type: "draft/update",
