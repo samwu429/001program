@@ -2,19 +2,6 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      (function () {
-        try {
-          var host = location.hostname || "";
-          if (!host.endsWith("github.io")) return;
-          var path = location.pathname || "/";
-          if (path.indexOf("/docs/") !== -1 || /\/docs$/i.test(path)) return;
-          var base = path.replace(/\/+$/, "");
-          var target = location.origin + (base.length ? base : "") + "/docs/index.html";
-          if (location.href.split("#")[0] !== target) location.replace(target);
-        } catch (_) {}
-      })();
-    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>001 — 思维导图</title>
     <script type="module" crossorigin src="./assets/index-D6koPX08.js"></script>
