@@ -1,5 +1,61 @@
 import type { MindNode } from "./types";
 
+export type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
+
+/** 以按下时的矩形为基准，用当前指针世界坐标计算新矩形（对角/对边固定） */
+export function resizeNodeBounds(
+  handle: ResizeHandle,
+  ox: number,
+  oy: number,
+  ow: number,
+  oh: number,
+  wx: number,
+  wy: number,
+  minW = 96,
+  minH = 56
+): { x: number; y: number; width: number; height: number } {
+  const right = ox + ow;
+  const bottom = oy + oh;
+  switch (handle) {
+    case "se":
+      return {
+        x: ox,
+        y: oy,
+        width: Math.max(minW, wx - ox),
+        height: Math.max(minH, wy - oy),
+      };
+    case "e":
+      return { x: ox, y: oy, width: Math.max(minW, wx - ox), height: oh };
+    case "s":
+      return { x: ox, y: oy, width: ow, height: Math.max(minH, wy - oy) };
+    case "w": {
+      const nw = Math.max(minW, right - wx);
+      return { x: right - nw, y: oy, width: nw, height: oh };
+    }
+    case "n": {
+      const nh = Math.max(minH, bottom - wy);
+      return { x: ox, y: bottom - nh, width: ow, height: nh };
+    }
+    case "nw": {
+      const nw = Math.max(minW, right - wx);
+      const nh = Math.max(minH, bottom - wy);
+      return { x: right - nw, y: bottom - nh, width: nw, height: nh };
+    }
+    case "ne": {
+      const nw = Math.max(minW, wx - ox);
+      const nh = Math.max(minH, bottom - wy);
+      return { x: ox, y: bottom - nh, width: nw, height: nh };
+    }
+    case "sw": {
+      const nw = Math.max(minW, right - wx);
+      const nh = Math.max(minH, wy - oy);
+      return { x: right - nw, y: oy, width: nw, height: nh };
+    }
+    default:
+      return { x: ox, y: oy, width: ow, height: oh };
+  }
+}
+
 export function nodeCenter(n: MindNode): { x: number; y: number } {
   return { x: n.x + n.width / 2, y: n.y + n.height / 2 };
 }

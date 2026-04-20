@@ -346,12 +346,17 @@ export function MindMapCanvas({ state, dispatch }: Props) {
                 key={id}
                 node={n}
                 selected={state.selectedNodeId === id}
+                worldFromClient={(cx, cy) => screenToWorld(cx, cy)}
                 onSelect={(nid) => dispatch({ type: "select/node", id: nid })}
                 onStartDrag={handleStartNodeDrag}
                 onMoveDrag={handleMoveNodeDrag}
                 onEndDrag={handleEndNodeDrag}
                 onStartLink={handleStartLink}
                 onUpdateText={(nid, text) => dispatch({ type: "node/updateText", id: nid, text })}
+                onSetBounds={(nid, b) =>
+                  dispatch({ type: "node/setBounds", id: nid, x: b.x, y: b.y, width: b.width, height: b.height })
+                }
+                onDeleteNode={(nid) => dispatch({ type: "node/delete", id: nid })}
               />
             );
           })}
@@ -359,8 +364,8 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         {draftStyle && <div className="draft-rect" style={draftStyle} />}
       </div>
       <div className="hint">
-        左键空白处拖拽新建框；左键框边拖拽移动（靠近另一框松开可自动连线）。右键或中键空白拖动画布。右键在框上按下拖线到另一框可手动连线（支持多线）。
-        左键点选连线后按 Delete 删除。Ctrl + 滚轮缩放。
+        悬停框上方出现圆角工具条：用「移动」拖框；「选中」「删除」；选中后出现四角与四边缩放点。框内空白左键仅选中；在框内（非输入区）右键拖线连接。左键空白拖出新框；空白处右键或中键拖动画布。点选连线后 Delete
+        删除。Ctrl + 滚轮缩放。
       </div>
     </div>
   );

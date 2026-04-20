@@ -45,6 +45,8 @@ export type MindMapAction =
   | { type: "node/updateText"; id: string; text: string }
   | { type: "node/addImages"; id: string; images: MindNode["images"] }
   | { type: "node/setStyle"; id: string; fontSize?: number; fontFamily?: string }
+  | { type: "node/setBounds"; id: string; x: number; y: number; width: number; height: number }
+  | { type: "node/delete"; id: string }
   | { type: "delete/selection" }
   | { type: "grid/set"; mode: GridMode }
   | { type: "persist/load"; state: Partial<MindMapState> }
@@ -215,6 +217,35 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
             fontFamily: action.fontFamily ?? n.fontFamily,
           },
         },
+      };
+    }
+    case "node/setBounds": {
+      const n = state.nodes[action.id];
+      if (!n) return state;
+      return {
+        ...state,
+        nodes: {
+          ...state.nodes,
+          [action.id]: {
+            ...n,
+            x: action.x,
+            y: action.y,
+            width: action.width,
+            height: action.height,
+          },
+        },
+      };
+    }
+    case "node/delete": {
+      const id = action.id;
+      if (!state.nodes[id]) return state;
+      const { [id]: _, ...rest } = state.nodes;
+      return {
+        ...state,
+        nodes: rest,
+        nodeOrder: state.nodeOrder.filter((x) => x !== id),
+        edges: state.edges.filter((e) => e.from !== id && e.to !== id),
+        selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
       };
     }
     case "delete/selection": {

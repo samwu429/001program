@@ -120,8 +120,152 @@ body {
   flex-direction: column;
   min-width: 96px;
   min-height: 56px;
-  overflow: hidden;
+  overflow: visible;
   pointer-events: auto;
+}
+
+.node-chrome {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.14s ease;
+  white-space: nowrap;
+}
+
+.node-card:hover .node-chrome,
+.node-card.selected .node-chrome {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.node-chrome-btn {
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #f1f5f9;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.node-chrome-btn:hover {
+  background: #e2e8f0;
+}
+
+.node-chrome-drag {
+  font-weight: 600;
+  border-color: #cbd5e1;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.node-chrome-danger {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.node-chrome-danger:hover {
+  background: #fee2e2;
+}
+
+.node-chrome-grip {
+  display: inline-block;
+  width: 10px;
+  height: 12px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #64748b 0 2px,
+    transparent 2px 4px
+  );
+}
+
+.node-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 0 0 9px 9px;
+}
+
+.node-handle {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+  z-index: 5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.node-handle-nw {
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+}
+.node-handle-n {
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+  cursor: ns-resize;
+}
+.node-handle-ne {
+  right: 0;
+  top: 0;
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+}
+.node-handle-e {
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+  cursor: ew-resize;
+}
+.node-handle-se {
+  right: 0;
+  bottom: 0;
+  transform: translate(50%, 50%);
+  cursor: nwse-resize;
+}
+.node-handle-s {
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  cursor: ns-resize;
+}
+.node-handle-sw {
+  left: 0;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  cursor: nesw-resize;
+}
+.node-handle-w {
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: ew-resize;
 }
 
 .node-card.selected {
