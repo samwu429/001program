@@ -181,7 +181,7 @@ export function NodeBox({
   const onDeleteClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      if (window.confirm("删除此框及其连线？")) onDeleteNode(node.id);
+      onDeleteNode(node.id);
     },
     [node.id, onDeleteNode]
   );
