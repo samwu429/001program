@@ -2,6 +2,7 @@ import { useState, type Dispatch } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import type { MindMapState } from "../types";
 import { execDocCommand } from "../formatExec";
+import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "../viewportConstants";
 
 const FONT_OPTIONS: { label: string; value: string }[] = [
   { label: "Arial", value: "Arial, Helvetica, sans-serif" },
@@ -53,7 +54,7 @@ function zoomCanvas(dispatch: Dispatch<MindMapAction>, scale: number, factor: nu
   const r = el.getBoundingClientRect();
   const lx = r.left + r.width / 2;
   const ly = r.top + r.height / 2;
-  const next = Math.min(2.5, Math.max(0.35, scale * factor));
+  const next = Math.min(VIEWPORT_SCALE_MAX, Math.max(VIEWPORT_SCALE_MIN, scale * factor));
   dispatch({ type: "viewport/zoom", lx, ly, nextScale: next });
 }
 

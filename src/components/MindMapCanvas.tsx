@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { MindMapAction } from "../mindMapReducer";
+import { MIN_DRAFT } from "../mindMapReducer";
 import type { MindEdge, MindMapState, MindNode } from "../types";
 import { distPointToSegment, nodeCenter, normalizeRect } from "../geometry";
+import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "../viewportConstants";
 import { NodeBox } from "./NodeBox";
 
 type Props = {
@@ -86,9 +88,9 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     };
   }, [dispatch, linkingFromId, viewport]);
 
-  const hitWorld = 10;
+  /** 仅在「轻点」抬起时用：约 12 屏像素换算到世界坐标，避免连线附近大片区域无法拖出新框 */
   const pickNearestEdgeId = useCallback(
-    (wx: number, wy: number) => {
+    (wx: number, wy: number, maxDistWorld: number) => {
       let best: { id: string; d: number } | null = null;
       for (const edge of edges) {
         const a = nodes[edge.from];
@@ -96,7 +98,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         if (!a || !b) continue;
         const seg = edgeSegment(a, b, edges, edge);
         const d = distPointToSegment(wx, wy, seg.x1, seg.y1, seg.x2, seg.y2);
-        if (d <= hitWorld && (!best || d < best.d)) best = { id: edge.id, d };
+        if (d <= maxDistWorld && (!best || d < best.d)) best = { id: edge.id, d };
       }
       return best?.id ?? null;
     },
@@ -108,11 +110,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
       if (e.button === 0) {
         e.preventDefault();
         const w = screenToWorld(e.clientX, e.clientY);
-        const edgeId = pickNearestEdgeId(w.x, w.y);
-        if (edgeId) {
-          dispatch({ type: "select/edge", id: edgeId });
-          return;
-        }
+        /* 不按 down 选边：连线旁「空白」也能拖出新框；轻点选边在 pointerup 里处理 */
         draftPointerId.current = e.pointerId;
         draftAnchor.current = { x1: w.x, y1: w.y };
         dispatch({ type: "draft/start", rect: { x1: w.x, y1: w.y, x2: w.x, y2: w.y } });
@@ -125,7 +123,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       }
     },
-    [dispatch, pickNearestEdgeId, screenToWorld]
+    [dispatch, screenToWorld]
   );
 
   const onBoardPointerMove = useCallback(
@@ -149,12 +147,28 @@ export function MindMapCanvas({ state, dispatch }: Props) {
   const onBoardPointerUp = useCallback(
     (e: React.PointerEvent) => {
       if (draftPointerId.current === e.pointerId && e.button === 0) {
+        const anchor = draftAnchor.current;
+        const w = screenToWorld(e.clientX, e.clientY);
         draftPointerId.current = null;
         draftAnchor.current = null;
         try {
           (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
         } catch {
           /* ignore */
+        }
+        if (anchor) {
+          const nr = normalizeRect({ x1: anchor.x1, y1: anchor.y1, x2: w.x, y2: w.y });
+          const small = nr.width < MIN_DRAFT || nr.height < MIN_DRAFT;
+          if (small) {
+            const tapPx = 12;
+            const maxDistWorld = tapPx / Math.max(viewport.scale, VIEWPORT_SCALE_MIN);
+            const edgeId = pickNearestEdgeId(w.x, w.y, maxDistWorld);
+            if (edgeId) {
+              dispatch({ type: "draft/cancel" });
+              dispatch({ type: "select/edge", id: edgeId });
+              return;
+            }
+          }
         }
         dispatch({ type: "draft/commit" });
       }
@@ -168,7 +182,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         dispatch({ type: "pan/end" });
       }
     },
-    [dispatch]
+    [dispatch, pickNearestEdgeId, screenToWorld, viewport.scale]
   );
 
   const onBoardPointerCancel = useCallback(
@@ -196,7 +210,10 @@ export function MindMapCanvas({ state, dispatch }: Props) {
       const lx = e.clientX - r.left;
       const ly = e.clientY - r.top;
       const prev = viewport.scale;
-      const nextScale = Math.min(2.5, Math.max(0.35, prev * (e.deltaY > 0 ? 0.92 : 1.08)));
+      const nextScale = Math.min(
+        VIEWPORT_SCALE_MAX,
+        Math.max(VIEWPORT_SCALE_MIN, prev * (e.deltaY > 0 ? 0.92 : 1.08))
+      );
       dispatch({ type: "viewport/zoom", lx, ly, nextScale });
     },
     [dispatch, viewport.scale]
@@ -361,7 +378,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         {draftStyle && <div className="draft-rect" style={draftStyle} />}
       </div>
       <div className="hint">
-        顶栏第二行为类似 Google Docs 的格式（粗体、颜色、列表、对齐等）；请先在框内点一下再点格式按钮。悬停框上小条可移动/删除。左键空白拖新框；空白右键或中键拖画布。Ctrl + 滚轮缩放。
+        顶栏第二行为类似 Google Docs 的格式（粗体、颜色、列表、对齐等）；请先在框内点一下再点格式按钮。悬停框上小条可移动/删除。画布任意空白处左键拖出新框（轻点连线附近可选中连线）；右键或中键拖动画布。Ctrl + 滚轮缩放（范围更大，便于大画布）。
       </div>
     </div>
   );

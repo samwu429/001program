@@ -1,10 +1,11 @@
 import type { DraftRect, GridMode, MindEdge, MindMapState, MindNode, Viewport } from "./types";
 import { dist, nodeCenter, normalizeRect } from "./geometry";
+import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "./viewportConstants";
 
 const STORAGE_KEY = "001program-mindmap-v1";
 const MIN_NODE_W = 96;
 const MIN_NODE_H = 56;
-const MIN_DRAFT = 24;
+export const MIN_DRAFT = 24;
 const AUTO_LINK_RADIUS = 100;
 
 function uid(prefix: string): string {
@@ -86,7 +87,8 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
         },
       };
     case "viewport/zoom": {
-      const { lx, ly, nextScale } = action;
+      const { lx, ly, nextScale: raw } = action;
+      const nextScale = Math.min(VIEWPORT_SCALE_MAX, Math.max(VIEWPORT_SCALE_MIN, raw));
       const { x: vx, y: vy, scale: prev } = state.viewport;
       if (nextScale === prev) return state;
       const worldX = (lx - vx) / prev;
@@ -291,7 +293,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
           ? {
               x: vp.x,
               y: vp.y,
-              scale: Math.min(2.5, Math.max(0.35, vp.scale)),
+              scale: Math.min(VIEWPORT_SCALE_MAX, Math.max(VIEWPORT_SCALE_MIN, vp.scale)),
             }
           : initialState.viewport;
       const nodes = p.nodes && typeof p.nodes === "object" ? (p.nodes as Record<string, MindNode>) : {};
