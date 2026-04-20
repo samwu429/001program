@@ -98,6 +98,8 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
+  /* 空层会盖住 board-hit，必须让空白穿透，否则左键/右键画布无效 */
+  pointer-events: none;
 }
 
 .draft-rect {
@@ -119,6 +121,7 @@ body {
   min-width: 96px;
   min-height: 56px;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 .node-card.selected {
