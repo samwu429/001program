@@ -223,6 +223,7 @@ body {
   border-radius: 0 0 9px 9px;
 }
 
+/* 必须高于 .node-hover-stack(6)，否则顶部缩放点会与透明桥梁重叠而无法拖动 */
 .node-handle {
   position: absolute;
   width: 11px;
@@ -231,7 +232,7 @@ body {
   background: #ffffff;
   border: 2px solid var(--accent);
   border-radius: 2px;
-  z-index: 5;
+  z-index: 8;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
