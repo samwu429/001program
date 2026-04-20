@@ -1,0 +1,12 @@
+GitHub Pages 任选其一：
+
+A) 使用 gh-pages 分支（推荐，站点在仓库根路径）
+   1) 打开仓库 Settings → Pages
+   2) Build and deployment → Branch 选 gh-pages，Folder 选 / (root)
+   3) 等待 Actions 里 “Deploy gh-pages” 跑完（绿勾）后再访问
+
+B) 使用 main 分支的 /docs 目录
+   1) Settings → Pages → Branch 选 main，Folder 选 /docs
+   2) 保存后约 1 分钟生效
+
+访问地址：https://samwu429.github.io/001program/
