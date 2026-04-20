@@ -124,12 +124,30 @@ body {
   pointer-events: auto;
 }
 
-.node-chrome {
+.node-hover-stack {
   position: absolute;
   left: 50%;
   bottom: 100%;
   transform: translateX(-50%);
-  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max(100%, 280px);
+  max-width: 420px;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
+  z-index: 6;
+  pointer-events: auto;
+}
+
+.node-chrome-bridge {
+  width: 100%;
+  min-height: 32px;
+  flex: 0 0 auto;
+}
+
+.node-chrome {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -138,15 +156,13 @@ body {
   border: 1px solid var(--border);
   border-radius: 999px;
   box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
-  z-index: 6;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.14s ease;
+  transition: opacity 0.16s ease;
   white-space: nowrap;
 }
 
-.node-card:hover .node-chrome,
-.node-card.selected .node-chrome {
+.node-card.chrome-visible .node-chrome {
   opacity: 1;
   pointer-events: auto;
 }

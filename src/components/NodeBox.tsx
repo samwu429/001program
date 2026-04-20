@@ -1,9 +1,11 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ResizeHandle } from "../geometry";
 import { resizeNodeBounds } from "../geometry";
 import type { MindNode } from "../types";
 
 const RESIZE_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
+/** 鼠标离开整个框（含工具条桥梁）后，再等一会儿才收起，方便移上去点按钮 */
+const CHROME_HIDE_DELAY_MS = 520;
 
 type Bounds = { x: number; y: number; width: number; height: number };
 
@@ -35,6 +37,8 @@ export function NodeBox({
   onDeleteNode,
 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [hoverPinned, setHoverPinned] = useState(false);
+  const hideChromeTimer = useRef<number | null>(null);
   const movedRef = useRef(false);
   const dragActive = useRef(false);
   const resizeSession = useRef<{
@@ -44,6 +48,50 @@ export function NodeBox({
     ow: number;
     oh: number;
   } | null>(null);
+
+  const clearChromeHideTimer = useCallback(() => {
+    if (hideChromeTimer.current != null) {
+      window.clearTimeout(hideChromeTimer.current);
+      hideChromeTimer.current = null;
+    }
+  }, []);
+
+  const scheduleChromeHide = useCallback(() => {
+    clearChromeHideTimer();
+    hideChromeTimer.current = window.setTimeout(() => {
+      hideChromeTimer.current = null;
+      setHoverPinned(false);
+    }, CHROME_HIDE_DELAY_MS);
+  }, [clearChromeHideTimer]);
+
+  useEffect(() => () => clearChromeHideTimer(), [clearChromeHideTimer]);
+
+  const onCardMouseEnter = useCallback(() => {
+    clearChromeHideTimer();
+    setHoverPinned(true);
+  }, [clearChromeHideTimer]);
+
+  const onCardMouseLeave = useCallback(() => {
+    if (dragActive.current || resizeSession.current) return;
+    scheduleChromeHide();
+  }, [scheduleChromeHide]);
+
+  const onChromeZoneEnter = useCallback(() => {
+    clearChromeHideTimer();
+    setHoverPinned(true);
+  }, [clearChromeHideTimer]);
+
+  const maybeCollapseChromeIfNotHovered = useCallback(() => {
+    queueMicrotask(() => {
+      const el = cardRef.current;
+      if (!el) return;
+      try {
+        if (!el.matches(":hover")) scheduleChromeHide();
+      } catch {
+        scheduleChromeHide();
+      }
+    });
+  }, [scheduleChromeHide]);
 
   const onDragHandlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -87,9 +135,10 @@ export function NodeBox({
           /* ignore */
         }
         onEndDrag(node.id, movedRef.current);
+        maybeCollapseChromeIfNotHovered();
       }
     },
-    [node.id, onEndDrag]
+    [maybeCollapseChromeIfNotHovered, node.id, onEndDrag]
   );
 
   const onBodyPointerDown = useCallback(
@@ -148,7 +197,8 @@ export function NodeBox({
     } catch {
       /* ignore */
     }
-  }, []);
+    maybeCollapseChromeIfNotHovered();
+  }, [maybeCollapseChromeIfNotHovered]);
 
   const onDeleteClick = useCallback(
     (e: React.MouseEvent) => {
@@ -158,11 +208,13 @@ export function NodeBox({
     [node.id, onDeleteNode]
   );
 
+  const chromeVisible = selected || hoverPinned;
+
   return (
     <div
       ref={cardRef}
       data-node-id={node.id}
-      className={`node-card${selected ? " selected" : ""}`}
+      className={`node-card${selected ? " selected" : ""}${chromeVisible ? " chrome-visible" : ""}`}
       style={{
         left: node.x,
         top: node.y,
@@ -171,35 +223,40 @@ export function NodeBox({
         fontSize: node.fontSize,
         fontFamily: node.fontFamily,
       }}
+      onMouseEnter={onCardMouseEnter}
+      onMouseLeave={onCardMouseLeave}
       onPointerMove={onCardPointerMove}
       onPointerUp={onCardPointerUp}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <div className="node-chrome" onPointerDown={(e) => e.stopPropagation()}>
-        <button
-          type="button"
-          className="node-chrome-btn node-chrome-drag"
-          title="拖住移动整个框"
-          aria-label="拖动"
-          onPointerDown={onDragHandlePointerDown}
-        >
-          <span className="node-chrome-grip" aria-hidden />
-          移动
-        </button>
-        <button
-          type="button"
-          className="node-chrome-btn"
-          title="选中此框"
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            onSelect(node.id);
-          }}
-        >
-          选中
-        </button>
-        <button type="button" className="node-chrome-btn node-chrome-danger" title="删除" onClick={onDeleteClick}>
-          删除
-        </button>
+      <div className="node-hover-stack" onMouseEnter={onChromeZoneEnter}>
+        <div className="node-chrome" onPointerDown={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            className="node-chrome-btn node-chrome-drag"
+            title="拖住移动整个框"
+            aria-label="拖动"
+            onPointerDown={onDragHandlePointerDown}
+          >
+            <span className="node-chrome-grip" aria-hidden />
+            移动
+          </button>
+          <button
+            type="button"
+            className="node-chrome-btn"
+            title="选中此框"
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              onSelect(node.id);
+            }}
+          >
+            选中
+          </button>
+          <button type="button" className="node-chrome-btn node-chrome-danger" title="删除" onClick={onDeleteClick}>
+            删除
+          </button>
+        </div>
+        <div className="node-chrome-bridge" />
       </div>
 
       <div className="node-body" onPointerDown={onBodyPointerDown}>

@@ -364,8 +364,8 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         {draftStyle && <div className="draft-rect" style={draftStyle} />}
       </div>
       <div className="hint">
-        悬停框上方出现圆角工具条：用「移动」拖框；「选中」「删除」；选中后出现四角与四边缩放点。框内空白左键仅选中；在框内（非输入区）右键拖线连接。左键空白拖出新框；空白处右键或中键拖动画布。点选连线后 Delete
-        删除。Ctrl + 滚轮缩放。
+        悬停框上方出现圆角工具条（与框之间有透明衔接区，移开鼠标后约半秒才收起，方便点上方的「移动」「选中」「删除」）。用「移动」拖框；选中后出现缩放点。框内空白左键仅选中；框内（非输入区）右键拖线。左键空白拖新框；空白右键或中键拖画布。点连线后 Delete。Ctrl
+        + 滚轮缩放。
       </div>
     </div>
   );
