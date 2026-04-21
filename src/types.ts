@@ -54,4 +54,16 @@ export interface MindMapState {
   panPointerId: number | null;
   panLast: { sx: number; sy: number } | null;
   dragNode: { id: string } | null;
+  historyPast: HistorySnapshot[];
+  historyFuture: HistorySnapshot[];
+}
+
+export interface HistorySnapshot {
+  nodes: Record<string, MindNode>;
+  nodeOrder: string[];
+  edges: MindEdge[];
+  viewport: Viewport;
+  gridMode: GridMode;
+  selectedNodeId: string | null;
+  selectedEdgeId: string | null;
 }

@@ -1,4 +1,4 @@
-import type { DraftRect, GridMode, MindEdge, MindMapState, MindNode, Viewport } from "./types";
+import type { DraftRect, GridMode, HistorySnapshot, MindEdge, MindMapState, MindNode, Viewport } from "./types";
 import { dist, nodeCenter, normalizeRect } from "./geometry";
 import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "./viewportConstants";
 
@@ -7,6 +7,7 @@ const MIN_NODE_W = 96;
 const MIN_NODE_H = 56;
 export const MIN_DRAFT = 24;
 const AUTO_LINK_RADIUS = 100;
+const MAX_HISTORY = 120;
 
 function uid(prefix: string): string {
   return `${prefix}_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
@@ -26,6 +27,8 @@ export const initialState: MindMapState = {
   panPointerId: null,
   panLast: null,
   dragNode: null,
+  historyPast: [],
+  historyFuture: [],
 };
 
 export type MindMapAction =
@@ -56,7 +59,28 @@ export type MindMapAction =
   | { type: "board/clear" }
   | { type: "pan/start"; pointerId: number; sx: number; sy: number }
   | { type: "pan/move"; sx: number; sy: number }
-  | { type: "pan/end" };
+  | { type: "pan/end" }
+  | { type: "history/undo" }
+  | { type: "history/redo" };
+
+function snapshotOf(state: MindMapState): HistorySnapshot {
+  return {
+    nodes: state.nodes,
+    nodeOrder: state.nodeOrder,
+    edges: state.edges,
+    viewport: state.viewport,
+    gridMode: state.gridMode,
+    selectedNodeId: state.selectedNodeId,
+    selectedEdgeId: state.selectedEdgeId,
+  };
+}
+
+function withHistory(prev: MindMapState, next: MindMapState): MindMapState {
+  if (next === prev) return prev;
+  const past = [...prev.historyPast, snapshotOf(prev)];
+  if (past.length > MAX_HISTORY) past.shift();
+  return { ...next, historyPast: past, historyFuture: [] };
+}
 
 function closestNodeForAutoLink(
   nodes: Record<string, MindNode>,
@@ -78,6 +102,39 @@ function closestNodeForAutoLink(
 
 export function mindMapReducer(state: MindMapState, action: MindMapAction): MindMapState {
   switch (action.type) {
+    case "history/undo": {
+      const last = state.historyPast[state.historyPast.length - 1];
+      if (!last) return state;
+      const rest = state.historyPast.slice(0, -1);
+      return {
+        ...state,
+        ...last,
+        draftRect: null,
+        linkingFromId: null,
+        linkCursor: null,
+        panPointerId: null,
+        panLast: null,
+        dragNode: null,
+        historyPast: rest,
+        historyFuture: [snapshotOf(state), ...state.historyFuture].slice(0, MAX_HISTORY),
+      };
+    }
+    case "history/redo": {
+      const nextSnap = state.historyFuture[0];
+      if (!nextSnap) return state;
+      return {
+        ...state,
+        ...nextSnap,
+        draftRect: null,
+        linkingFromId: null,
+        linkCursor: null,
+        panPointerId: null,
+        panLast: null,
+        dragNode: null,
+        historyPast: [...state.historyPast, snapshotOf(state)].slice(-MAX_HISTORY),
+        historyFuture: state.historyFuture.slice(1),
+      };
+    }
     case "viewport/pan":
       return {
         ...state,
@@ -124,14 +181,14 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
         borderColor: "#e2e4e8",
         images: [],
       };
-      return {
+      return withHistory(state, {
         ...state,
         draftRect: null,
         nodes: { ...state.nodes, [id]: node },
         nodeOrder: [...state.nodeOrder, id],
         selectedNodeId: id,
         selectedEdgeId: null,
-      };
+      });
     }
     case "node/startDrag":
       return {
@@ -161,7 +218,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
       const edges = exists
         ? state.edges
         : [...state.edges, { id: uid("e"), from: action.id, to: other, color: "#94a3b8", width: 2 }];
-      return { ...state, dragNode: null, edges };
+      return withHistory(state, { ...state, dragNode: null, edges });
     }
     case "link/start":
       return {
@@ -179,11 +236,11 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
       const to = action.targetId;
       const next = { ...state, linkingFromId: null, linkCursor: null };
       if (!to || to === from) return next;
-      return {
+      return withHistory(state, {
         ...next,
         edges: [...next.edges, { id: uid("e"), from, to, color: "#94a3b8", width: 2 }],
         selectedNodeId: to,
-      };
+      });
     }
     case "select/node":
       return { ...state, selectedNodeId: action.id, selectedEdgeId: null };
@@ -192,26 +249,26 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
     case "node/updateText": {
       const n = state.nodes[action.id];
       if (!n) return state;
-      return {
+      return withHistory(state, {
         ...state,
         nodes: { ...state.nodes, [action.id]: { ...n, text: action.text } },
-      };
+      });
     }
     case "node/addImages": {
       const n = state.nodes[action.id];
       if (!n) return state;
-      return {
+      return withHistory(state, {
         ...state,
         nodes: {
           ...state.nodes,
           [action.id]: { ...n, images: [...n.images, ...action.images] },
         },
-      };
+      });
     }
     case "node/setStyle": {
       const n = state.nodes[action.id];
       if (!n) return state;
-      return {
+      return withHistory(state, {
         ...state,
         nodes: {
           ...state.nodes,
@@ -222,10 +279,10 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
             borderColor: action.borderColor ?? n.borderColor ?? "#e2e4e8",
           },
         },
-      };
+      });
     }
     case "edge/setStyle":
-      return {
+      return withHistory(state, {
         ...state,
         edges: state.edges.map((e) =>
           e.id === action.id
@@ -236,11 +293,11 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
               }
             : e
         ),
-      };
+      });
     case "node/setBounds": {
       const n = state.nodes[action.id];
       if (!n) return state;
-      return {
+      return withHistory(state, {
         ...state,
         nodes: {
           ...state.nodes,
@@ -252,53 +309,53 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
             height: action.height,
           },
         },
-      };
+      });
     }
     case "node/delete": {
       const id = action.id;
       if (!state.nodes[id]) return state;
       const { [id]: _, ...rest } = state.nodes;
-      return {
+      return withHistory(state, {
         ...state,
         nodes: rest,
         nodeOrder: state.nodeOrder.filter((x) => x !== id),
         edges: state.edges.filter((e) => e.from !== id && e.to !== id),
         selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
-      };
+      });
     }
     case "delete/selection": {
       if (state.selectedEdgeId) {
-        return {
+        return withHistory(state, {
           ...state,
           edges: state.edges.filter((e) => e.id !== state.selectedEdgeId),
           selectedEdgeId: null,
-        };
+        });
       }
       if (state.selectedNodeId) {
         const id = state.selectedNodeId;
         const { [id]: _, ...rest } = state.nodes;
-        return {
+        return withHistory(state, {
           ...state,
           nodes: rest,
           nodeOrder: state.nodeOrder.filter((x) => x !== id),
           edges: state.edges.filter((e) => e.from !== id && e.to !== id),
           selectedNodeId: null,
-        };
+        });
       }
       return state;
     }
     case "edge/remove":
-      return {
+      return withHistory(state, {
         ...state,
         edges: state.edges.filter((e) => e.id !== action.id),
         selectedEdgeId: state.selectedEdgeId === action.id ? null : state.selectedEdgeId,
-      };
+      });
     case "board/clear":
-      return {
+      return withHistory(state, {
         ...initialState,
         viewport: state.viewport,
         gridMode: state.gridMode,
-      };
+      });
     case "grid/set":
       return { ...state, gridMode: action.mode };
     case "persist/load": {
@@ -330,7 +387,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
           }))
         : [];
       const gridMode: GridMode = p.gridMode === "plain" ? "plain" : "grid";
-      return {
+      return withHistory(state, {
         ...initialState,
         nodes,
         nodeOrder,
@@ -339,7 +396,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
         gridMode,
         selectedNodeId: null,
         selectedEdgeId: null,
-      };
+      });
     }
     case "pan/start":
       return { ...state, panPointerId: action.pointerId, panLast: { sx: action.sx, sy: action.sy } };

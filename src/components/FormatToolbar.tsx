@@ -1,7 +1,7 @@
 import { useState, type Dispatch } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import type { MindMapState } from "../types";
-import { execDocCommand } from "../formatExec";
+import { execDocCommand, isRichTextEditorFocused } from "../formatExec";
 import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "../viewportConstants";
 
 const FONT_OPTIONS: { label: string; value: string }[] = [
@@ -58,9 +58,71 @@ function zoomCanvas(dispatch: Dispatch<MindMapAction>, scale: number, factor: nu
   dispatch({ type: "viewport/zoom", lx, ly, nextScale: next });
 }
 
+function printOccupiedCanvas(state: MindMapState) {
+  const nodes = state.nodeOrder.map((id) => state.nodes[id]).filter(Boolean);
+  if (nodes.length === 0) {
+    window.alert("当前没有可打印的框");
+    return;
+  }
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const n of nodes) {
+    minX = Math.min(minX, n.x);
+    minY = Math.min(minY, n.y);
+    maxX = Math.max(maxX, n.x + n.width);
+    maxY = Math.max(maxY, n.y + n.height);
+  }
+  const pad = 36;
+  const w = Math.max(1, maxX - minX + pad * 2);
+  const h = Math.max(1, maxY - minY + pad * 2);
+  const nodeHtml = nodes
+    .map((n) => {
+      const left = n.x - minX + pad;
+      const top = n.y - minY + pad;
+      return `<div class="p-node" style="left:${left}px;top:${top}px;width:${n.width}px;height:${n.height}px;border-color:${
+        n.borderColor ?? "#e2e4e8"
+      };font-size:${n.fontSize}px;font-family:${n.fontFamily};">${n.text || ""}</div>`;
+    })
+    .join("");
+  const edgesHtml = state.edges
+    .map((e) => {
+      const a = state.nodes[e.from];
+      const b = state.nodes[e.to];
+      if (!a || !b) return "";
+      const x1 = a.x + a.width / 2 - minX + pad;
+      const y1 = a.y + a.height / 2 - minY + pad;
+      const x2 = b.x + b.width / 2 - minX + pad;
+      const y2 = b.y + b.height / 2 - minY + pad;
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${e.color ?? "#94a3b8"}" stroke-width="${
+        e.width ?? 2
+      }" />`;
+    })
+    .join("");
+
+  const win = window.open("", "_blank", "noopener,noreferrer");
+  if (!win) return;
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>print</title>
+  <style>
+  html,body{margin:0;padding:0;background:#fff}
+  .paper{position:relative;width:${w}px;height:${h}px}
+  .p-svg{position:absolute;inset:0}
+  .p-node{position:absolute;box-sizing:border-box;border:1px solid #e2e4e8;border-radius:10px;padding:10px 12px;overflow:hidden;background:#fff}
+  @media print{ @page{margin:10mm} }
+  </style></head><body>
+  <div class="paper">
+    <svg class="p-svg" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">${edgesHtml}</svg>
+    ${nodeHtml}
+  </div></body></html>`);
+  win.document.close();
+  win.focus();
+  win.print();
+}
+
 export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, onFontFamily }: Props) {
   const sel = state.selectedNodeId ? state.nodes[state.selectedNodeId] : undefined;
-  const textDisabled = false;
+  const textDisabled = !isRichTextEditorFocused();
   const edge = state.selectedEdgeId ? state.edges.find((e) => e.id === state.selectedEdgeId) : undefined;
   const pct = Math.round(state.viewport.scale * 100);
 
@@ -76,9 +138,11 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
             className="ft-icon-btn"
             title="撤销"
             aria-label="撤销"
-            disabled={textDisabled}
+            disabled={textDisabled && state.historyPast.length === 0}
             onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("undo")}
+            onClick={() => {
+              if (!execDocCommand("undo")) dispatch({ type: "history/undo" });
+            }}
           >
             ↶
           </button>
@@ -87,9 +151,11 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
             className="ft-icon-btn"
             title="重做"
             aria-label="重做"
-            disabled={textDisabled}
+            disabled={textDisabled && state.historyFuture.length === 0}
             onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("redo")}
+            onClick={() => {
+              if (!execDocCommand("redo")) dispatch({ type: "history/redo" });
+            }}
           >
             ↷
           </button>
@@ -99,7 +165,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
             title="打印页面"
             aria-label="打印"
             onMouseDown={preventLoseSelection}
-            onClick={() => window.print()}
+            onClick={() => printOccupiedCanvas(state)}
           >
             打印
           </button>
