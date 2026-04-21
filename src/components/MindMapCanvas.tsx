@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import { MIN_DRAFT } from "../mindMapReducer";
 import type { MindEdge, MindMapState, MindNode } from "../types";
@@ -41,6 +41,10 @@ export function MindMapCanvas({ state, dispatch }: Props) {
   const draftPointerId = useRef<number | null>(null);
   const panPointerId = useRef<number | null>(null);
   const draftAnchor = useRef<{ x1: number; y1: number } | null>(null);
+  const joyPointerId = useRef<number | null>(null);
+  const joyBaseRef = useRef<HTMLDivElement>(null);
+  const [joyActive, setJoyActive] = useState(false);
+  const [joyPos, setJoyPos] = useState({ x: 0, y: 0 });
 
   const { viewport, gridMode, nodes, nodeOrder, edges, draftRect, linkingFromId, linkCursor } = state;
 
@@ -107,6 +111,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
 
   const onBoardPointerDown = useCallback(
     (e: React.PointerEvent) => {
+      if ((e.target as HTMLElement).closest("[data-node-id]")) return;
       if (e.button === 0) {
         e.preventDefault();
         const w = screenToWorld(e.clientX, e.clientY);
@@ -219,6 +224,63 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     [dispatch, viewport.scale]
   );
 
+  const zoomAtCenter = useCallback(
+    (nextScale: number) => {
+      const el = wrapRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const lx = r.left + r.width / 2;
+      const ly = r.top + r.height / 2;
+      dispatch({ type: "viewport/zoom", lx, ly, nextScale });
+    },
+    [dispatch]
+  );
+
+  const onJoystickPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    joyPointerId.current = e.pointerId;
+    setJoyActive(true);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const onJoystickPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (joyPointerId.current !== e.pointerId) return;
+    const base = joyBaseRef.current;
+    if (!base) return;
+    const r = base.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const max = r.width * 0.32;
+    const len = Math.hypot(dx, dy) || 1;
+    const k = Math.min(1, max / len);
+    setJoyPos({ x: dx * k, y: dy * k });
+  }, []);
+
+  const onJoystickPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (joyPointerId.current !== e.pointerId) return;
+    joyPointerId.current = null;
+    setJoyActive(false);
+    setJoyPos({ x: 0, y: 0 });
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!joyActive) return;
+    const t = window.setInterval(() => {
+      const v = joyPos;
+      if (Math.abs(v.x) < 0.1 && Math.abs(v.y) < 0.1) return;
+      dispatch({ type: "viewport/pan", dx: -v.x * 0.18, dy: -v.y * 0.18 });
+    }, 16);
+    return () => window.clearInterval(t);
+  }, [dispatch, joyActive, joyPos]);
+
   const handleStartNodeDrag = useCallback(
     (id: string, clientX: number, clientY: number) => {
       const w = screenToWorld(clientX, clientY);
@@ -292,6 +354,10 @@ export function MindMapCanvas({ state, dispatch }: Props) {
       ref={wrapRef}
       className={`canvas-wrap${gridMode === "plain" ? " plain" : ""}`}
       onWheel={onWheel}
+      onPointerDown={onBoardPointerDown}
+      onPointerMove={onBoardPointerMove}
+      onPointerUp={onBoardPointerUp}
+      onPointerCancel={onBoardPointerCancel}
       onContextMenu={(e) => e.preventDefault()}
     >
       <div
@@ -301,13 +367,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         }}
       >
         <div className="grid-layer" aria-hidden />
-        <div
-          className="board-hit"
-          onPointerDown={onBoardPointerDown}
-          onPointerMove={onBoardPointerMove}
-          onPointerUp={onBoardPointerUp}
-          onPointerCancel={onBoardPointerCancel}
-        />
+        <div className="board-hit" />
         <svg className="edges-svg">
           {edges.map((edge) => {
             const a = nodes[edge.from];
@@ -379,6 +439,52 @@ export function MindMapCanvas({ state, dispatch }: Props) {
       </div>
       <div className="hint">
         顶栏第二行为类似 Google Docs 的格式（粗体、颜色、列表、对齐等）；请先在框内点一下再点格式按钮。悬停框上小条可移动/删除。画布任意空白处左键拖出新框（轻点连线附近可选中连线）；右键或中键拖动画布。Ctrl + 滚轮缩放（范围更大，便于大画布）。
+      </div>
+      <div className="canvas-controls" onPointerDown={(e) => e.stopPropagation()}>
+        <div
+          className="joypad"
+          ref={joyBaseRef}
+          onPointerDown={onJoystickPointerDown}
+          onPointerMove={onJoystickPointerMove}
+          onPointerUp={onJoystickPointerUp}
+          onPointerCancel={onJoystickPointerUp}
+        >
+          <div
+            className="joypad-knob"
+            style={{
+              transform: `translate(${joyPos.x}px, ${joyPos.y}px)`,
+            }}
+          />
+        </div>
+        <div className="zoom-rail-wrap">
+          <button
+            type="button"
+            className="zoom-mini-btn"
+            onClick={() =>
+              zoomAtCenter(Math.max(VIEWPORT_SCALE_MIN, state.viewport.scale * 0.9))
+            }
+          >
+            -
+          </button>
+          <input
+            className="zoom-rail"
+            type="range"
+            min={VIEWPORT_SCALE_MIN}
+            max={VIEWPORT_SCALE_MAX}
+            step={0.01}
+            value={state.viewport.scale}
+            onChange={(e) => zoomAtCenter(Number(e.target.value))}
+          />
+          <button
+            type="button"
+            className="zoom-mini-btn"
+            onClick={() =>
+              zoomAtCenter(Math.min(VIEWPORT_SCALE_MAX, state.viewport.scale * 1.1))
+            }
+          >
+            +
+          </button>
+        </div>
       </div>
     </div>
   );

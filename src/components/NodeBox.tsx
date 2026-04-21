@@ -224,6 +224,7 @@ export function NodeBox({
       }}
       onMouseEnter={onCardMouseEnter}
       onMouseLeave={onCardMouseLeave}
+      onPointerDown={(e) => e.stopPropagation()}
       onPointerMove={onCardPointerMove}
       onPointerUp={onCardPointerUp}
       onContextMenu={(e) => e.preventDefault()}
