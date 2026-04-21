@@ -45,7 +45,8 @@ export type MindMapAction =
   | { type: "select/edge"; id: string | null }
   | { type: "node/updateText"; id: string; text: string }
   | { type: "node/addImages"; id: string; images: MindNode["images"] }
-  | { type: "node/setStyle"; id: string; fontSize?: number; fontFamily?: string }
+  | { type: "node/setStyle"; id: string; fontSize?: number; fontFamily?: string; borderColor?: string }
+  | { type: "edge/setStyle"; id: string; color?: string; width?: number }
   | { type: "node/setBounds"; id: string; x: number; y: number; width: number; height: number }
   | { type: "node/delete"; id: string }
   | { type: "delete/selection" }
@@ -120,6 +121,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
         text: "",
         fontSize: 15,
         fontFamily: "system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+        borderColor: "#e2e4e8",
         images: [],
       };
       return {
@@ -158,7 +160,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
       const exists = state.edges.some((e) => e.from === action.id && e.to === other);
       const edges = exists
         ? state.edges
-        : [...state.edges, { id: uid("e"), from: action.id, to: other }];
+        : [...state.edges, { id: uid("e"), from: action.id, to: other, color: "#94a3b8", width: 2 }];
       return { ...state, dragNode: null, edges };
     }
     case "link/start":
@@ -179,7 +181,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
       if (!to || to === from) return next;
       return {
         ...next,
-        edges: [...next.edges, { id: uid("e"), from, to }],
+        edges: [...next.edges, { id: uid("e"), from, to, color: "#94a3b8", width: 2 }],
         selectedNodeId: to,
       };
     }
@@ -217,10 +219,24 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
             ...n,
             fontSize: action.fontSize ?? n.fontSize,
             fontFamily: action.fontFamily ?? n.fontFamily,
+            borderColor: action.borderColor ?? n.borderColor ?? "#e2e4e8",
           },
         },
       };
     }
+    case "edge/setStyle":
+      return {
+        ...state,
+        edges: state.edges.map((e) =>
+          e.id === action.id
+            ? {
+                ...e,
+                color: action.color ?? e.color ?? "#94a3b8",
+                width: action.width ?? e.width ?? 2,
+              }
+            : e
+        ),
+      };
     case "node/setBounds": {
       const n = state.nodes[action.id];
       if (!n) return state;
@@ -296,9 +312,23 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
               scale: Math.min(VIEWPORT_SCALE_MAX, Math.max(VIEWPORT_SCALE_MIN, vp.scale)),
             }
           : initialState.viewport;
-      const nodes = p.nodes && typeof p.nodes === "object" ? (p.nodes as Record<string, MindNode>) : {};
+      const nodes =
+        p.nodes && typeof p.nodes === "object"
+          ? Object.fromEntries(
+              Object.entries(p.nodes as Record<string, MindNode>).map(([id, n]) => [
+                id,
+                { ...n, borderColor: n.borderColor ?? "#e2e4e8" },
+              ])
+            )
+          : {};
       const nodeOrder = Array.isArray(p.nodeOrder) ? (p.nodeOrder as string[]) : [];
-      const edges = Array.isArray(p.edges) ? (p.edges as MindEdge[]) : [];
+      const edges = Array.isArray(p.edges)
+        ? (p.edges as MindEdge[]).map((e) => ({
+            ...e,
+            color: e.color ?? "#94a3b8",
+            width: e.width ?? 2,
+          }))
+        : [];
       const gridMode: GridMode = p.gridMode === "plain" ? "plain" : "grid";
       return {
         ...initialState,

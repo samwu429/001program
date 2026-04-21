@@ -392,8 +392,8 @@ export function MindMapCanvas({ state, dispatch }: Props) {
                   y1={seg.y1}
                   x2={seg.x2}
                   y2={seg.y2}
-                  stroke={selected ? "#2563eb" : "#94a3b8"}
-                  strokeWidth={selected ? 3 : 2}
+                  stroke={selected ? "#2563eb" : edge.color ?? "#94a3b8"}
+                  strokeWidth={selected ? Math.max((edge.width ?? 2) + 1, 3) : edge.width ?? 2}
                 />
               </g>
             );

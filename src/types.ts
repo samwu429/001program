@@ -15,6 +15,7 @@ export interface MindNode {
   text: string;
   fontSize: number;
   fontFamily: string;
+  borderColor: string;
   images: NodeImage[];
 }
 
@@ -22,6 +23,8 @@ export interface MindEdge {
   id: string;
   from: string;
   to: string;
+  color: string;
+  width: number;
 }
 
 export interface Viewport {

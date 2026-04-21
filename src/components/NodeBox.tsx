@@ -221,6 +221,7 @@ export function NodeBox({
         height: node.height,
         fontSize: node.fontSize,
         fontFamily: node.fontFamily,
+        borderColor: node.borderColor ?? "#e2e4e8",
       }}
       onMouseEnter={onCardMouseEnter}
       onMouseLeave={onCardMouseLeave}

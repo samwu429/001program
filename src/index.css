@@ -514,6 +514,10 @@ button.toolbar-btn.primary:hover {
   user-select: none;
 }
 
+.ft-line-width {
+  width: 84px;
+}
+
 .ft-color {
   position: relative;
   display: inline-flex;
