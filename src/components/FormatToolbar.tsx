@@ -1,7 +1,8 @@
-import { useState, type Dispatch } from "react";
+import { useEffect, useState, type Dispatch } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import type { MindMapState } from "../types";
-import { execDocCommand, isRichTextEditorFocused } from "../formatExec";
+import { execDocCommand, getLinkHrefFromSelection, isRichTextEditorFocused } from "../formatExec";
+import { LinkInsertDialog } from "./LinkInsertDialog";
 import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "../viewportConstants";
 import { useI18n } from "../i18n";
 
@@ -127,6 +128,13 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
   const textDisabled = !isRichTextEditorFocused();
   const edge = state.selectedEdgeId ? state.edges.find((e) => e.id === state.selectedEdgeId) : undefined;
   const pct = Math.round(state.viewport.scale * 100);
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkSeedHref, setLinkSeedHref] = useState("");
+  const [linkSavedRange, setLinkSavedRange] = useState<Range | null>(null);
+
+  useEffect(() => {
+    if (!state.selectedNodeId) setLinkOpen(false);
+  }, [state.selectedNodeId]);
 
   const ff = sel?.fontFamily ?? FONT_OPTIONS[0].value;
   const fontValue = FONT_OPTIONS.some((o) => o.value === ff) ? ff : FONT_OPTIONS[0].value;
@@ -315,11 +323,16 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
               type="button"
               className="ft-icon-btn"
               title={t("link")}
-              disabled={textDisabled}
-              onMouseDown={preventLoseSelection}
+              disabled={textDisabled || !state.selectedNodeId}
+              onMouseDown={(e) => {
+                preventLoseSelection(e);
+                const s = window.getSelection();
+                setLinkSavedRange(s?.rangeCount ? s.getRangeAt(0).cloneRange() : null);
+                setLinkSeedHref(getLinkHrefFromSelection() ?? "");
+              }}
               onClick={() => {
-                const u = window.prompt(t("linkPrompt"), "https://");
-                if (u) execDocCommand("createLink", u);
+                if (textDisabled || !state.selectedNodeId) return;
+                setLinkOpen(true);
               }}
             >
               {t("link")}
@@ -462,6 +475,14 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           </div>
         </div>
       </div>
+      <LinkInsertDialog
+        open={linkOpen}
+        onClose={() => setLinkOpen(false)}
+        nodeId={state.selectedNodeId}
+        savedRange={linkSavedRange}
+        initialHref={linkSeedHref}
+        t={t}
+      />
     </div>
   );
 }

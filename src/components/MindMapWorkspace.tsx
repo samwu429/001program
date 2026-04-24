@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   initialState,
@@ -6,6 +6,7 @@ import {
   serializeState,
 } from "../mindMapReducer";
 import { MindMapCanvas } from "./MindMapCanvas";
+import type { ImportJsonOutcome } from "./ImportJsonDialog";
 import { Toolbar, validateImportedDoc } from "./Toolbar";
 import type { GridMode } from "../types";
 import type { MindMapAction } from "../mindMapReducer";
@@ -19,6 +20,8 @@ type Props = {
 
 export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Props) {
   const { t, lang, setLang } = useI18n();
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
   const [state, dispatch] = useReducer(mindMapReducer, initialDataJson, (raw) => {
     if (!raw) return initialState;
     try {
@@ -38,6 +41,22 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
     const t = window.setTimeout(() => onPersist(serializeState(state)), 500);
     return () => window.clearTimeout(t);
   }, [state, onPersist]);
+
+  useEffect(
+    () => () => {
+      if (toastTimerRef.current != null) window.clearTimeout(toastTimerRef.current);
+    },
+    []
+  );
+
+  const showToast = useCallback((msg: string) => {
+    if (toastTimerRef.current != null) window.clearTimeout(toastTimerRef.current);
+    setToast(msg);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToast(null);
+      toastTimerRef.current = null;
+    }, 3400);
+  }, []);
 
   const onInsertImage = useCallback(() => {
     imageInputRef.current?.click();
@@ -84,33 +103,46 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
   );
 
   const onExportJson = useCallback(() => {
+    const stamp = new Date().toISOString().replace(/[:]/g, "-").split(".")[0] ?? "export";
     const blob = new Blob([serializeState(state)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "mindmap.json";
+    a.download = `mindmap-${stamp}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [state]);
+    showToast(t("exportDone"));
+  }, [state, showToast, t]);
 
-  const onImportJson = useCallback(
-    async (file: File) => {
-      const text = await file.text();
+  const onCopyJson = useCallback(async () => {
+    const text = serializeState(state);
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(t("exportCopied"));
+    } catch {
+      window.alert(t("copyJsonFail"));
+    }
+  }, [state, showToast, t]);
+
+  const onApplyImportJson = useCallback(
+    async (jsonText: string): Promise<ImportJsonOutcome> => {
       let raw: unknown;
       try {
-        raw = JSON.parse(text) as unknown;
+        raw = JSON.parse(jsonText) as unknown;
       } catch {
-        window.alert(t("jsonParseFail"));
-        return;
+        return "parse";
       }
       const doc = validateImportedDoc(raw);
-      if (!doc) {
-        window.alert(t("invalidFormat"));
-        return;
+      if (!doc) return "schema";
+      if (state.nodeOrder.length > 0) {
+        const ok = window.confirm(t("importReplaceConfirm", { count: state.nodeOrder.length }));
+        if (!ok) return "canceled";
       }
       dispatch({ type: "persist/load", state: doc });
+      showToast(t("importDone"));
+      return "ok";
     },
-    [dispatch, t]
+    [dispatch, state.nodeOrder.length, showToast, t]
   );
 
   const onClearBoard = useCallback(() => {
@@ -120,6 +152,11 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
 
   return (
     <div className="app-shell">
+      {toast ? (
+        <div className="app-toast" role="status" aria-live="polite">
+          {toast}
+        </div>
+      ) : null}
       {trialBanner}
       <input
         ref={imageInputRef}
@@ -147,7 +184,8 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
           onFontSize={onFontSize}
           onFontFamily={onFontFamily}
           onExportJson={onExportJson}
-          onImportJson={onImportJson}
+          onCopyJson={onCopyJson}
+          onApplyImportJson={onApplyImportJson}
           onClearBoard={onClearBoard}
         />
       </div>

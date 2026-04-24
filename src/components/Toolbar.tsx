@@ -1,7 +1,8 @@
-import { useRef, type Dispatch } from "react";
+import { useState, type Dispatch } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import type { GridMode, MindMapState, MindNode } from "../types";
 import { FormatToolbar } from "./FormatToolbar";
+import { ImportJsonDialog, type ImportJsonOutcome } from "./ImportJsonDialog";
 import { useI18n } from "../i18n";
 
 type Props = {
@@ -12,7 +13,8 @@ type Props = {
   onFontSize: (px: number) => void;
   onFontFamily: (ff: string) => void;
   onExportJson: () => void;
-  onImportJson: (file: File) => void;
+  onCopyJson: () => void | Promise<void>;
+  onApplyImportJson: (jsonText: string) => Promise<ImportJsonOutcome>;
   onClearBoard: () => void;
 };
 
@@ -24,11 +26,12 @@ export function Toolbar({
   onFontSize,
   onFontFamily,
   onExportJson,
-  onImportJson,
+  onCopyJson,
+  onApplyImportJson,
   onClearBoard,
 }: Props) {
   const { t } = useI18n();
-  const importInputRef = useRef<HTMLInputElement>(null);
+  const [importOpen, setImportOpen] = useState(false);
   const sel = state.selectedNodeId ? state.nodes[state.selectedNodeId] : undefined;
   const selectionText = state.selectedNodeId
     ? t("selectedNode")
@@ -77,22 +80,12 @@ export function Toolbar({
             <button type="button" className="toolbar-btn toolbar-btn--primary" onClick={onExportJson}>
               {t("exportJson")}
             </button>
-            <button type="button" className="toolbar-btn" onClick={() => importInputRef.current?.click()}>
+            <button type="button" className="toolbar-btn" onClick={() => void onCopyJson()}>
+              {t("copyJson")}
+            </button>
+            <button type="button" className="toolbar-btn" onClick={() => setImportOpen(true)}>
               {t("importJson")}
             </button>
-            <input
-              ref={importInputRef}
-              type="file"
-              accept="application/json,.json"
-              className="visually-hidden"
-              aria-hidden="true"
-              tabIndex={-1}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                e.target.value = "";
-                if (f) void onImportJson(f);
-              }}
-            />
           </div>
         </div>
         <div className="toolbar-status" aria-live="polite">
@@ -106,6 +99,13 @@ export function Toolbar({
         selectedFontSize={sel?.fontSize ?? 15}
         onFontSize={onFontSize}
         onFontFamily={onFontFamily}
+      />
+      <ImportJsonDialog
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onApply={onApplyImportJson}
+        t={t}
+        nodeCount={state.nodeOrder.length}
       />
     </>
   );
