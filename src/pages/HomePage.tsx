@@ -12,6 +12,7 @@ import {
 } from "../documents/guestCanvases";
 import { createCloudCanvas, deleteCloudCanvas, getCloudCanvas, listCloudCanvases, saveCloudCanvas } from "../documents/cloudCanvases";
 import { initialState, serializeState } from "../mindMapReducer";
+import heroArt from "../assets/hero-dashboard.png";
 
 const EMPTY = serializeState(initialState);
 
@@ -153,10 +154,30 @@ export function HomePage() {
               <strong>{user ? t("cloud") : t("local", { usage: guestUsage })}</strong>
             </div>
           </div>
-          <div className="console-knob" aria-hidden>
-            <div className="console-knob-core" />
-          </div>
         </div>
+
+        <section className="console-hero" aria-labelledby="home-hero-title">
+          <div className="console-hero-copy">
+            <p className="console-hero-eyebrow">{t("homeHeroEyebrow")}</p>
+            <h2 id="home-hero-title" className="console-hero-title">
+              {t("homeHeroTitle")}
+            </h2>
+            <p className="console-hero-lead">{t("homeHeroLead")}</p>
+            <ul className="console-hero-features">
+              <li>{t("homeHeroF1")}</li>
+              <li>{t("homeHeroF2")}</li>
+              <li>{t("homeHeroF3")}</li>
+            </ul>
+            <button type="button" className="home-btn home-btn-wood console-hero-cta" onClick={() => void onNew()}>
+              {t("newCanvas")}
+            </button>
+          </div>
+          <div className="console-hero-art">
+            <div className="console-hero-art-inner">
+              <img src={heroArt} alt={t("homeHeroImgAlt")} width={1200} height={675} decoding="async" />
+            </div>
+          </div>
+        </section>
 
         <section className="console-content-grid">
           <div className="console-panel console-panel-wood">

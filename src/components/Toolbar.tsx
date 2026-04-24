@@ -1,4 +1,4 @@
-import type { Dispatch } from "react";
+import { useRef, type Dispatch } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import type { GridMode, MindMapState, MindNode } from "../types";
 import { FormatToolbar } from "./FormatToolbar";
@@ -28,6 +28,7 @@ export function Toolbar({
   onClearBoard,
 }: Props) {
   const { t } = useI18n();
+  const importInputRef = useRef<HTMLInputElement>(null);
   const sel = state.selectedNodeId ? state.nodes[state.selectedNodeId] : undefined;
   const selectionText = state.selectedNodeId
     ? t("selectedNode")
@@ -40,48 +41,59 @@ export function Toolbar({
       <header className="toolbar">
         <div className="toolbar-group">
           <span className="toolbar-label">{t("insert")}</span>
-          <button type="button" className="toolbar-btn" onClick={onInsertImage} disabled={!sel}>
-            {t("imageToSelected")}
-          </button>
+          <div className="toolbar-cluster">
+            <button type="button" className="toolbar-btn" onClick={onInsertImage} disabled={!sel}>
+              {t("imageToSelected")}
+            </button>
+          </div>
         </div>
         <div className="toolbar-group">
           <span className="toolbar-label">{t("tools")}</span>
-          <button
-            type="button"
-            className={`toolbar-btn ${state.gridMode === "grid" ? "primary" : ""}`}
-            onClick={() => onGridMode("grid")}
-          >
-            {t("lightGrid")}
-          </button>
-          <button
-            type="button"
-            className={`toolbar-btn ${state.gridMode === "plain" ? "primary" : ""}`}
-            onClick={() => onGridMode("plain")}
-          >
-            {t("plainBoard")}
-          </button>
-          <button type="button" className="toolbar-btn" onClick={onClearBoard}>
-            {t("clearBoard")}
-          </button>
+          <div className="toolbar-cluster toolbar-cluster--tight">
+            <div className="toolbar-segmented" role="group" aria-label={t("canvasBackground")}>
+              <button
+                type="button"
+                className={`toolbar-btn toolbar-btn--segment ${state.gridMode === "grid" ? "is-selected" : ""}`}
+                onClick={() => onGridMode("grid")}
+              >
+                {t("lightGrid")}
+              </button>
+              <button
+                type="button"
+                className={`toolbar-btn toolbar-btn--segment ${state.gridMode === "plain" ? "is-selected" : ""}`}
+                onClick={() => onGridMode("plain")}
+              >
+                {t("plainBoard")}
+              </button>
+            </div>
+            <button type="button" className="toolbar-btn toolbar-btn--danger" onClick={onClearBoard}>
+              {t("clearBoard")}
+            </button>
+          </div>
         </div>
         <div className="toolbar-group">
           <span className="toolbar-label">{t("export")}</span>
-          <button type="button" className="toolbar-btn primary" onClick={onExportJson}>
-            {t("exportJson")}
-          </button>
-          <label className="toolbar-btn" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            {t("importJson")}
+          <div className="toolbar-cluster">
+            <button type="button" className="toolbar-btn toolbar-btn--primary" onClick={onExportJson}>
+              {t("exportJson")}
+            </button>
+            <button type="button" className="toolbar-btn" onClick={() => importInputRef.current?.click()}>
+              {t("importJson")}
+            </button>
             <input
+              ref={importInputRef}
               type="file"
               accept="application/json,.json"
-              style={{ display: "none" }}
+              className="visually-hidden"
+              aria-hidden="true"
+              tabIndex={-1}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 e.target.value = "";
                 if (f) void onImportJson(f);
               }}
             />
-          </label>
+          </div>
         </div>
         <div className="toolbar-status" aria-live="polite">
           <span className="toolbar-status-pill">{selectionText}</span>

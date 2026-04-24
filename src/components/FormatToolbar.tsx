@@ -134,321 +134,332 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
   return (
     <div className="format-toolbar" aria-label={t("richFormatAria")}>
       <div className="format-toolbar-inner">
-        <div className="ft-group">
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("undo")}
-            aria-label={t("undo")}
-            disabled={textDisabled && state.historyPast.length === 0}
-            onMouseDown={preventLoseSelection}
-            onClick={() => {
-              if (!execDocCommand("undo")) dispatch({ type: "history/undo" });
-            }}
-          >
-            ↶
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("redo")}
-            aria-label={t("redo")}
-            disabled={textDisabled && state.historyFuture.length === 0}
-            onMouseDown={preventLoseSelection}
-            onClick={() => {
-              if (!execDocCommand("redo")) dispatch({ type: "history/redo" });
-            }}
-          >
-            ↷
-          </button>
-          <button
-            type="button"
-            className="ft-text-btn"
-            title={t("print")}
-            aria-label={t("print")}
-            onMouseDown={preventLoseSelection}
-            onClick={() => printOccupiedCanvas(state, t)}
-          >
-            {t("print")}
-          </button>
+        <div className="ft-section" aria-label={t("formatHistory")}>
+          <div className="ft-group">
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("undo")}
+              aria-label={t("undo")}
+              disabled={textDisabled && state.historyPast.length === 0}
+              onMouseDown={preventLoseSelection}
+              onClick={() => {
+                if (!execDocCommand("undo")) dispatch({ type: "history/undo" });
+              }}
+            >
+              ↶
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("redo")}
+              aria-label={t("redo")}
+              disabled={textDisabled && state.historyFuture.length === 0}
+              onMouseDown={preventLoseSelection}
+              onClick={() => {
+                if (!execDocCommand("redo")) dispatch({ type: "history/redo" });
+              }}
+            >
+              ↷
+            </button>
+            <button
+              type="button"
+              className="ft-text-btn"
+              title={t("print")}
+              aria-label={t("print")}
+              onMouseDown={preventLoseSelection}
+              onClick={() => printOccupiedCanvas(state, t)}
+            >
+              {t("print")}
+            </button>
+          </div>
         </div>
-        <span className="ft-divider" />
 
-        <div className="ft-group">
-          <button
-            type="button"
-            className="ft-zoom-btn"
-            title={t("zoomOut")}
-            aria-label={t("zoomOut")}
-            onClick={() => zoomCanvas(dispatch, state.viewport.scale, 0.92)}
-          >
-            −
-          </button>
-          <span className="ft-zoom-label">{pct}%</span>
-          <button
-            type="button"
-            className="ft-zoom-btn"
-            title={t("zoomIn")}
-            aria-label={t("zoomIn")}
-            onClick={() => zoomCanvas(dispatch, state.viewport.scale, 1.08)}
-          >
-            +
-          </button>
+        <div className="ft-section" aria-label={t("canvasZoom")}>
+          <div className="ft-group">
+            <button
+              type="button"
+              className="ft-zoom-btn"
+              title={t("zoomOut")}
+              aria-label={t("zoomOut")}
+              onClick={() => zoomCanvas(dispatch, state.viewport.scale, 0.92)}
+            >
+              −
+            </button>
+            <span className="ft-zoom-label">{pct}%</span>
+            <button
+              type="button"
+              className="ft-zoom-btn"
+              title={t("zoomIn")}
+              aria-label={t("zoomIn")}
+              onClick={() => zoomCanvas(dispatch, state.viewport.scale, 1.08)}
+            >
+              +
+            </button>
+          </div>
         </div>
-        <span className="ft-divider" />
 
-        <StyleBlockSelect disabled={textDisabled} t={t} />
-        <span className="ft-divider" />
-
-        <div className="ft-group">
-          <select
-            className="ft-select"
-            aria-label={t("font")}
-            disabled={!sel}
-            value={fontValue}
-            onMouseDown={preventLoseSelection}
-            onChange={(e) => onFontFamily(e.target.value)}
-          >
-            {FONT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            className="ft-num-btn"
-            title={t("fontDown")}
-            disabled={!sel}
-            onMouseDown={preventLoseSelection}
-            onClick={() => onFontSize(Math.max(10, selectedFontSize - 1))}
-          >
-            −
-          </button>
-          <span className="ft-num-val">{selectedFontSize}</span>
-          <button
-            type="button"
-            className="ft-num-btn"
-            title={t("fontUp")}
-            disabled={!sel}
-            onMouseDown={preventLoseSelection}
-            onClick={() => onFontSize(Math.min(36, selectedFontSize + 1))}
-          >
-            +
-          </button>
+        <div className="ft-section">
+          <StyleBlockSelect disabled={textDisabled} t={t} />
         </div>
-        <span className="ft-divider" />
 
-        <div className="ft-group">
-          <button
-            type="button"
-            className="ft-icon-btn ft-strong"
+        <div className="ft-section">
+          <div className="ft-group">
+            <select
+              className="ft-select"
+              aria-label={t("font")}
+              disabled={!sel}
+              value={fontValue}
+              onMouseDown={preventLoseSelection}
+              onChange={(e) => onFontFamily(e.target.value)}
+            >
+              {FONT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="ft-num-btn"
+              title={t("fontDown")}
+              disabled={!sel}
+              onMouseDown={preventLoseSelection}
+              onClick={() => onFontSize(Math.max(10, selectedFontSize - 1))}
+            >
+              −
+            </button>
+            <span className="ft-num-val">{selectedFontSize}</span>
+            <button
+              type="button"
+              className="ft-num-btn"
+              title={t("fontUp")}
+              disabled={!sel}
+              onMouseDown={preventLoseSelection}
+              onClick={() => onFontSize(Math.min(36, selectedFontSize + 1))}
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div className="ft-section">
+          <div className="ft-group">
+            <button
+              type="button"
+              className="ft-icon-btn ft-strong"
             title={t("bold")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("bold")}
-          >
-            B
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn ft-italic"
-            title={t("italic")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("italic")}
-          >
-            I
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn ft-under"
-            title={t("underline")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("underline")}
-          >
-            U
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("strikethrough")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("strikeThrough")}
-          >
-            <span className="ft-strike">S</span>
-          </button>
-          <label className="ft-color" title={t("textColor")}>
-            <span className="ft-color-a">A</span>
-            <input
-              type="color"
-              aria-label={t("textColor")}
+              onClick={() => execDocCommand("bold")}
+            >
+              B
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn ft-italic"
+              title={t("italic")}
               disabled={textDisabled}
               onMouseDown={preventLoseSelection}
-              onChange={(e) => execDocCommand("foreColor", e.target.value)}
-            />
-          </label>
-          <label className="ft-color ft-hi" title={t("highlight")}>
-            <span className="ft-hi-icon">▉</span>
-            <input
-              type="color"
-              aria-label={t("highlight")}
+              onClick={() => execDocCommand("italic")}
+            >
+              I
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn ft-under"
+              title={t("underline")}
               disabled={textDisabled}
-              defaultValue="#fff59d"
               onMouseDown={preventLoseSelection}
-              onChange={(e) => execDocCommand("hiliteColor", e.target.value)}
-            />
-          </label>
-        </div>
-        <span className="ft-divider" />
-
-        <div className="ft-group">
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("link")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => {
-              const u = window.prompt(t("linkPrompt"), "https://");
-              if (u) execDocCommand("createLink", u);
-            }}
-          >
-            {t("link")}
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("clearFormat")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("removeFormat")}
-          >
-            {t("clearFormat")}
-          </button>
-        </div>
-        <span className="ft-divider" />
-
-        <div className="ft-group">
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("alignLeft")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("justifyLeft")}
-          >
-            ≡
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("alignCenter")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("justifyCenter")}
-          >
-            ≣
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("alignRight")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("justifyRight")}
-          >
-            ≢
-          </button>
-        </div>
-        <span className="ft-divider" />
-
-        <div className="ft-group">
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("bullets")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("insertUnorderedList")}
-          >
-            •
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("numbered")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("insertOrderedList")}
-          >
-            1.
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("outdent")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("outdent")}
-          >
-            ⇤
-          </button>
-          <button
-            type="button"
-            className="ft-icon-btn"
-            title={t("indent")}
-            disabled={textDisabled}
-            onMouseDown={preventLoseSelection}
-            onClick={() => execDocCommand("indent")}
-          >
-            ⇥
-          </button>
+              onClick={() => execDocCommand("underline")}
+            >
+              U
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("strikethrough")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("strikeThrough")}
+            >
+              <span className="ft-strike">S</span>
+            </button>
+            <label className="ft-color" title={t("textColor")}>
+              <span className="ft-color-a">A</span>
+              <input
+                type="color"
+                aria-label={t("textColor")}
+                disabled={textDisabled}
+                onMouseDown={preventLoseSelection}
+                onChange={(e) => execDocCommand("foreColor", e.target.value)}
+              />
+            </label>
+            <label className="ft-color ft-hi" title={t("highlight")}>
+              <span className="ft-hi-icon">▉</span>
+              <input
+                type="color"
+                aria-label={t("highlight")}
+                disabled={textDisabled}
+                defaultValue="#fff59d"
+                onMouseDown={preventLoseSelection}
+                onChange={(e) => execDocCommand("hiliteColor", e.target.value)}
+              />
+            </label>
+          </div>
         </div>
 
-        <span className="ft-divider" />
-        <div className="ft-group">
-          <label className="ft-color" title={t("borderColor")}>
-            <span className="ft-color-a">{t("boxLabel")}</span>
+        <div className="ft-section">
+          <div className="ft-group">
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("link")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => {
+                const u = window.prompt(t("linkPrompt"), "https://");
+                if (u) execDocCommand("createLink", u);
+              }}
+            >
+              {t("link")}
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("clearFormat")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("removeFormat")}
+            >
+              {t("clearFormat")}
+            </button>
+          </div>
+        </div>
+
+        <div className="ft-section">
+          <div className="ft-group">
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("alignLeft")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("justifyLeft")}
+            >
+              ≡
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("alignCenter")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("justifyCenter")}
+            >
+              ≣
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("alignRight")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("justifyRight")}
+            >
+              ≢
+            </button>
+          </div>
+        </div>
+
+        <div className="ft-section">
+          <div className="ft-group">
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("bullets")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("insertUnorderedList")}
+            >
+              •
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("numbered")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("insertOrderedList")}
+            >
+              1.
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("outdent")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("outdent")}
+            >
+              ⇤
+            </button>
+            <button
+              type="button"
+              className="ft-icon-btn"
+              title={t("indent")}
+              disabled={textDisabled}
+              onMouseDown={preventLoseSelection}
+              onClick={() => execDocCommand("indent")}
+            >
+              ⇥
+            </button>
+          </div>
+        </div>
+
+        <div className="ft-section ft-section--edge">
+          <span className="ft-section-label">{t("shapeAndLink")}</span>
+          <div className="ft-group ft-group--edge">
+            <label className="ft-color" title={t("borderColor")}>
+              <span className="ft-color-a">{t("boxLabel")}</span>
+              <input
+                type="color"
+                aria-label={t("borderColor")}
+                disabled={!sel}
+                value={sel?.borderColor ?? "#e2e4e8"}
+                onChange={(e) =>
+                  sel && dispatch({ type: "node/setStyle", id: sel.id, borderColor: e.target.value })
+                }
+              />
+            </label>
+            <label className="ft-color" title={t("edgeColor")}>
+              <span className="ft-color-a">{t("lineLabel")}</span>
+              <input
+                type="color"
+                aria-label={t("edgeColor")}
+                disabled={!edge}
+                value={edge?.color ?? "#94a3b8"}
+                onChange={(e) =>
+                  edge && dispatch({ type: "edge/setStyle", id: edge.id, color: e.target.value })
+                }
+              />
+            </label>
             <input
-              type="color"
-              aria-label={t("borderColor")}
-              disabled={!sel}
-              value={sel?.borderColor ?? "#e2e4e8"}
-              onChange={(e) =>
-                sel && dispatch({ type: "node/setStyle", id: sel.id, borderColor: e.target.value })
-              }
-            />
-          </label>
-          <label className="ft-color" title={t("edgeColor")}>
-            <span className="ft-color-a">{t("lineLabel")}</span>
-            <input
-              type="color"
-              aria-label={t("edgeColor")}
+              className="ft-line-width"
+              type="range"
+              min={1}
+              max={8}
+              step={1}
               disabled={!edge}
-              value={edge?.color ?? "#94a3b8"}
+              value={edge?.width ?? 2}
               onChange={(e) =>
-                edge && dispatch({ type: "edge/setStyle", id: edge.id, color: e.target.value })
+                edge && dispatch({ type: "edge/setStyle", id: edge.id, width: Number(e.target.value) })
               }
+              title={t("edgeWidth")}
+              aria-label={t("edgeWidth")}
             />
-          </label>
-          <input
-            className="ft-line-width"
-            type="range"
-            min={1}
-            max={8}
-            step={1}
-            disabled={!edge}
-            value={edge?.width ?? 2}
-            onChange={(e) =>
-              edge && dispatch({ type: "edge/setStyle", id: edge.id, width: Number(e.target.value) })
-            }
-            title={t("edgeWidth")}
-            aria-label={t("edgeWidth")}
-          />
-          <span className="ft-num-val">{edge?.width ?? 2}px</span>
+            <span className="ft-num-val">{edge?.width ?? 2}px</span>
+          </div>
         </div>
       </div>
     </div>
