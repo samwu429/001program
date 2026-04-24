@@ -1,4 +1,3 @@
-/** 保存前去掉危险标签（富文本为 HTML 字符串） */
 export function sanitizeNodeHtml(html: string): string {
   let s = html.replace(/<\/(?:script|style|iframe|object|embed)[^>]*>/gi, "");
   s = s.replace(/<(?:script|style|iframe|object|embed)[\s\S]*?<\/(?:script|style|iframe|object|embed)>/gi, "");

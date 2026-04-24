@@ -88,7 +88,6 @@ body {
   z-index: 1;
 }
 
-/* 不在 SVG 上抢命中：否则整块“空白”其实落在粗透明 stroke 上，左键/右键都到不了 board-hit */
 .edges-svg .hit {
   pointer-events: none;
   cursor: inherit;
@@ -102,7 +101,6 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
-  /* 空层会盖住 board-hit，必须让空白穿透，否则左键/右键画布无效 */
   pointer-events: none;
 }
 
@@ -228,7 +226,6 @@ body {
   border-radius: 0 0 9px 9px;
 }
 
-/* 必须高于 .node-hover-stack(6)，否则顶部缩放点会与透明桥梁重叠而无法拖动 */
 .node-handle {
   position: absolute;
   width: 11px;
@@ -404,7 +401,6 @@ button.toolbar-btn.primary:hover {
   filter: brightness(1.05);
 }
 
-/* —— Google Docs 风格第二行格式栏 —— */
 .format-toolbar {
   background: #edf2fa;
   border-bottom: 1px solid #c9d6e8;

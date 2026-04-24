@@ -195,7 +195,7 @@ export function HomePage() {
         </div>
 
         <aside className="panel home-side">
-          <h3>状态与提示</h3>
+          <h3>说明</h3>
           {!user ? (
             <div className="trial-banner trial-banner--warn home-trial">
               <strong>试用阶段：</strong>
@@ -212,11 +212,6 @@ export function HomePage() {
               当前站点还未读取到 Firebase 环境变量，若登录异常请检查仓库 Secrets 与部署状态。
             </p>
           )}
-          <ul className="home-checklist">
-            <li>纯色 UI 主题，弱阴影分层</li>
-            <li>卡片悬停与按钮反馈动画</li>
-            <li>多画布入口与状态可视化</li>
-          </ul>
         </aside>
       </section>
     </div>

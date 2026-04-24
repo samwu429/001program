@@ -120,9 +120,7 @@ export function NodeBox({
       if (e.button === 2) {
         try {
           cardRef.current?.releasePointerCapture(e.pointerId);
-        } catch {
-          /* ignore */
-        }
+        } catch {}
         return;
       }
       if (resizeSession.current) return;
@@ -130,9 +128,7 @@ export function NodeBox({
         dragActive.current = false;
         try {
           cardRef.current?.releasePointerCapture(e.pointerId);
-        } catch {
-          /* ignore */
-        }
+        } catch {}
         onEndDrag(node.id, movedRef.current);
         maybeCollapseChromeIfNotHovered();
       }
@@ -193,9 +189,7 @@ export function NodeBox({
     resizeSession.current = null;
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {
-      /* ignore */
-    }
+    } catch {}
     maybeCollapseChromeIfNotHovered();
   }, [maybeCollapseChromeIfNotHovered]);
 

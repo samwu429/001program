@@ -2,7 +2,6 @@ import type { MindNode } from "./types";
 
 export type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 
-/** 以按下时的矩形为基准，用当前指针世界坐标计算新矩形（对角/对边固定） */
 export function resizeNodeBounds(
   handle: ResizeHandle,
   ox: number,

@@ -11,11 +11,8 @@ import type { GridMode } from "../types";
 import type { MindMapAction } from "../mindMapReducer";
 
 type Props = {
-  /** 初次载入的画布 JSON（与导出格式一致） */
   initialDataJson: string | null;
-  /** 状态变化时回调（用于自动保存） */
   onPersist?: (json: string) => void;
-  /** 顶部试用提示 */
   trialBanner?: ReactNode;
 };
 

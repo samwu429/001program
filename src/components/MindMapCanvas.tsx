@@ -92,7 +92,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     };
   }, [dispatch, linkingFromId, viewport]);
 
-  /** 仅在「轻点」抬起时用：约 12 屏像素换算到世界坐标，避免连线附近大片区域无法拖出新框 */
   const pickNearestEdgeId = useCallback(
     (wx: number, wy: number, maxDistWorld: number) => {
       let best: { id: string; d: number } | null = null;
@@ -115,7 +114,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
       if (e.button === 0) {
         e.preventDefault();
         const w = screenToWorld(e.clientX, e.clientY);
-        /* 不按 down 选边：连线旁「空白」也能拖出新框；轻点选边在 pointerup 里处理 */
         draftPointerId.current = e.pointerId;
         draftAnchor.current = { x1: w.x, y1: w.y };
         dispatch({ type: "draft/start", rect: { x1: w.x, y1: w.y, x2: w.x, y2: w.y } });
@@ -133,7 +131,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
 
   const onBoardPointerMove = useCallback(
     (e: React.PointerEvent) => {
-      /* 勿依赖 e.buttons===1：捕获指针后部分环境 move 时 buttons 为 0，拖框会“只能朝一个方向拉” */
       if (draftPointerId.current === e.pointerId && draftAnchor.current) {
         const w = screenToWorld(e.clientX, e.clientY);
         dispatch({
@@ -141,7 +138,6 @@ export function MindMapCanvas({ state, dispatch }: Props) {
           rect: { ...draftAnchor.current, x2: w.x, y2: w.y },
         });
       }
-      /* 部分环境下拖右键时 e.buttons 不稳定，只要仍是当前平移指针就继续跟手 */
       if (panPointerId.current === e.pointerId) {
         dispatch({ type: "pan/move", sx: e.clientX, sy: e.clientY });
       }
@@ -158,9 +154,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         draftAnchor.current = null;
         try {
           (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-        } catch {
-          /* ignore */
-        }
+        } catch {}
         if (anchor) {
           const nr = normalizeRect({ x1: anchor.x1, y1: anchor.y1, x2: w.x, y2: w.y });
           const small = nr.width < MIN_DRAFT || nr.height < MIN_DRAFT;
@@ -181,9 +175,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         panPointerId.current = null;
         try {
           (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-        } catch {
-          /* ignore */
-        }
+        } catch {}
         dispatch({ type: "pan/end" });
       }
     },
@@ -266,9 +258,7 @@ export function MindMapCanvas({ state, dispatch }: Props) {
     setJoyPos({ x: 0, y: 0 });
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }, []);
 
   useEffect(() => {
