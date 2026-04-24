@@ -1141,13 +1141,36 @@ button.toolbar-btn.primary:hover {
 .toolbar-home-row {
   display: flex;
   align-items: center;
-  padding: 6px 12px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 14px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
 
+.toolbar-home-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
 .toolbar-home-row .toolbar-btn {
   text-decoration: none;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 36px;
+  padding: 8px 14px;
+  white-space: nowrap;
+}
+
+a.toolbar-btn.toolbar-btn-home {
+  line-height: 1.2;
 }
 
 @media (max-width: 900px) {

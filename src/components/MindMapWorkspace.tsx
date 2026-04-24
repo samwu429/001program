@@ -130,12 +130,14 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
       />
       <div className="toolbar-stack">
         <div className="toolbar-home-row">
-          <Link to="/" className="toolbar-btn">
-            ← {t("home")}
-          </Link>
-          <button type="button" className="toolbar-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")}>
-            {t("language")} {lang === "en" ? t("chinese") : t("english")}
-          </button>
+          <div className="toolbar-home-group">
+            <Link to="/" className="toolbar-btn toolbar-btn-home">
+              ← {t("home")}
+            </Link>
+            <button type="button" className="toolbar-btn toolbar-btn-home" onClick={() => setLang(lang === "en" ? "zh" : "en")}>
+              {t("language")} {lang === "en" ? t("chinese") : t("english")}
+            </button>
+          </div>
         </div>
         <Toolbar
           state={state}
