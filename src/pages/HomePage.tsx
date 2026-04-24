@@ -113,9 +113,7 @@ export function HomePage() {
       <div className="console-frame">
         <header className="console-header">
           <div className="console-brand">
-            <p className="console-brand-kicker">{t("homeBrandKicker")}</p>
-            <span className="console-brand-overline" aria-hidden />
-            <p className="console-brand-tag">{t("brand")}</p>
+            <p className="console-brand-label">{t("brand")}</p>
             <h1 className="home-title">{t("appTitle")}</h1>
           </div>
           <div className="console-auth">
@@ -166,13 +164,12 @@ export function HomePage() {
             <div className="console-hero-scrim" />
           </div>
           <div className="console-hero-copy">
-            <div className="console-hero-accent">
-              <span className="console-hero-overline" aria-hidden />
+            <div className="console-hero-title-block">
               <p className="console-hero-kicker">{t("homeHeroKicker")}</p>
+              <h2 id="home-hero-title" className="console-hero-title">
+                {t("homeHeroTitle")}
+              </h2>
             </div>
-            <h2 id="home-hero-title" className="console-hero-title">
-              {t("homeHeroTitle")}
-            </h2>
             <p className="console-hero-deck">{t("homeHeroEyebrow")}</p>
             <p className="console-hero-lead">{t("homeHeroLead")}</p>
             <ul className="console-hero-features">
@@ -189,9 +186,10 @@ export function HomePage() {
         <section className="console-content-grid">
           <div className="console-panel console-panel-wood">
             <div className="console-panel-head">
-              <p className="console-panel-kicker">{t("panelKickerMyCanvases")}</p>
-              <span className="console-panel-overline" aria-hidden />
-              <h2>{t("myCanvases")}</h2>
+              <div className="console-panel-title-block">
+                <p className="console-panel-kicker">{t("panelKickerMyCanvases")}</p>
+                <h2>{t("myCanvases")}</h2>
+              </div>
             </div>
             {listLoading ? (
               <p className="home-empty">{t("loadingList")}</p>
@@ -223,9 +221,10 @@ export function HomePage() {
 
           <aside className="console-panel console-panel-metal">
             <div className="console-panel-head">
-              <p className="console-panel-kicker">{t("panelKickerAccount")}</p>
-              <span className="console-panel-overline" aria-hidden />
-              <h3>{t("accountStorage")}</h3>
+              <div className="console-panel-title-block">
+                <p className="console-panel-kicker">{t("panelKickerAccount")}</p>
+                <h3>{t("accountStorage")}</h3>
+              </div>
             </div>
             {!user ? (
               <div className="console-note console-note-warn">
@@ -247,9 +246,10 @@ export function HomePage() {
         <section className="console-bottom-grid">
           <div className="console-panel console-panel-metal">
             <div className="console-panel-head">
-              <p className="console-panel-kicker">{t("panelKickerQuickActions")}</p>
-              <span className="console-panel-overline" aria-hidden />
-              <h3>{t("quickActions")}</h3>
+              <div className="console-panel-title-block">
+                <p className="console-panel-kicker">{t("panelKickerQuickActions")}</p>
+                <h3>{t("quickActions")}</h3>
+              </div>
             </div>
             <div className="console-quick-list">
               <button type="button" className="home-btn home-btn-wood" onClick={() => void onNew()}>
@@ -268,9 +268,10 @@ export function HomePage() {
 
           <div className="console-panel console-panel-wood">
             <div className="console-panel-head">
-              <p className="console-panel-kicker">{t("panelKickerWorkspace")}</p>
-              <span className="console-panel-overline" aria-hidden />
-              <h3>{t("workspaceStatus")}</h3>
+              <div className="console-panel-title-block">
+                <p className="console-panel-kicker">{t("panelKickerWorkspace")}</p>
+                <h3>{t("workspaceStatus")}</h3>
+              </div>
             </div>
             <div className="console-badge-row">
               <span className="console-card-index">{modeText}</span>
