@@ -113,6 +113,8 @@ export function HomePage() {
       <div className="console-frame">
         <header className="console-header">
           <div className="console-brand">
+            <p className="console-brand-kicker">{t("homeBrandKicker")}</p>
+            <span className="console-brand-overline" aria-hidden />
             <p className="console-brand-tag">{t("brand")}</p>
             <h1 className="home-title">{t("appTitle")}</h1>
           </div>
@@ -164,10 +166,14 @@ export function HomePage() {
             <div className="console-hero-scrim" />
           </div>
           <div className="console-hero-copy">
-            <p className="console-hero-eyebrow">{t("homeHeroEyebrow")}</p>
+            <div className="console-hero-accent">
+              <span className="console-hero-overline" aria-hidden />
+              <p className="console-hero-kicker">{t("homeHeroKicker")}</p>
+            </div>
             <h2 id="home-hero-title" className="console-hero-title">
               {t("homeHeroTitle")}
             </h2>
+            <p className="console-hero-deck">{t("homeHeroEyebrow")}</p>
             <p className="console-hero-lead">{t("homeHeroLead")}</p>
             <ul className="console-hero-features">
               <li>{t("homeHeroF1")}</li>
@@ -183,6 +189,8 @@ export function HomePage() {
         <section className="console-content-grid">
           <div className="console-panel console-panel-wood">
             <div className="console-panel-head">
+              <p className="console-panel-kicker">{t("panelKickerMyCanvases")}</p>
+              <span className="console-panel-overline" aria-hidden />
               <h2>{t("myCanvases")}</h2>
             </div>
             {listLoading ? (
@@ -215,6 +223,8 @@ export function HomePage() {
 
           <aside className="console-panel console-panel-metal">
             <div className="console-panel-head">
+              <p className="console-panel-kicker">{t("panelKickerAccount")}</p>
+              <span className="console-panel-overline" aria-hidden />
               <h3>{t("accountStorage")}</h3>
             </div>
             {!user ? (
@@ -237,6 +247,8 @@ export function HomePage() {
         <section className="console-bottom-grid">
           <div className="console-panel console-panel-metal">
             <div className="console-panel-head">
+              <p className="console-panel-kicker">{t("panelKickerQuickActions")}</p>
+              <span className="console-panel-overline" aria-hidden />
               <h3>{t("quickActions")}</h3>
             </div>
             <div className="console-quick-list">
@@ -256,6 +268,8 @@ export function HomePage() {
 
           <div className="console-panel console-panel-wood">
             <div className="console-panel-head">
+              <p className="console-panel-kicker">{t("panelKickerWorkspace")}</p>
+              <span className="console-panel-overline" aria-hidden />
               <h3>{t("workspaceStatus")}</h3>
             </div>
             <div className="console-badge-row">

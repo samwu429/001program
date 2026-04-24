@@ -2288,7 +2288,33 @@ body {
   display: none;
 }
 
+.console-home .console-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.console-home .console-brand-kicker {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ms-text-secondary);
+}
+
+.console-home .console-brand-overline {
+  display: block;
+  width: 40px;
+  height: 3px;
+  margin: 4px 0 2px;
+  background: linear-gradient(90deg, var(--ms-purple-line), rgba(124, 58, 237, 0.35));
+  border-radius: 1px;
+}
+
 .console-home .console-brand .home-title {
+  margin: 8px 0 0;
   color: var(--ms-text);
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -2343,25 +2369,43 @@ body {
   display: none;
 }
 
+.console-home .console-panel-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.console-home .console-panel-kicker {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ms-text-secondary);
+}
+
+.console-home .console-panel-overline {
+  display: block;
+  width: 36px;
+  height: 3px;
+  margin: 6px 0 10px;
+  background: linear-gradient(90deg, var(--ms-purple-line), rgba(124, 58, 237, 0.35));
+  border-radius: 1px;
+}
+
 .console-home .console-panel-head h2,
 .console-home .console-panel-head h3 {
-  position: relative;
-  padding-left: 12px;
   margin: 0 0 12px;
+  padding-left: 0;
+  font-size: 1.12rem;
   font-weight: 600;
   color: var(--ms-text);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .console-home .console-panel-head h2::before,
 .console-home .console-panel-head h3::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 2px;
-  bottom: 2px;
-  width: 3px;
-  background: linear-gradient(180deg, var(--ms-purple-line), var(--ms-purple));
+  display: none;
 }
 
 .console-home .console-panel-wood,
@@ -2544,26 +2588,52 @@ body {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.console-home .console-hero-eyebrow {
+.console-home .console-hero-accent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.console-home .console-hero-overline {
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ms-purple-line), rgba(91, 44, 145, 0.55));
+  border-radius: 1px;
+}
+
+.console-home .console-hero-kicker {
   margin: 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ms-purple);
+  color: var(--ms-text-secondary);
 }
 
 .console-home .console-hero-title {
-  margin: 0;
-  font-size: clamp(1.25rem, 2.4vw, 1.65rem);
+  margin: 6px 0 0;
+  font-size: clamp(1.35rem, 2.65vw, 1.88rem);
   font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.16;
+  letter-spacing: -0.03em;
   color: var(--ms-text);
+  font-family: system-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.console-home .console-hero-deck {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ms-purple);
+  letter-spacing: 0.01em;
 }
 
 .console-home .console-hero-lead {
-  margin: 0;
+  margin: 10px 0 0;
   font-size: 13px;
   line-height: 1.55;
   color: var(--ms-text-secondary);
@@ -2571,7 +2641,7 @@ body {
 }
 
 .console-home .console-hero-features {
-  margin: 4px 0 0;
+  margin: 12px 0 0;
   padding: 0 0 0 18px;
   font-size: 12px;
   line-height: 1.5;
