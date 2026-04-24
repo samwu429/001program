@@ -131,7 +131,7 @@ export function HomePage() {
 
       <section className="home-hero">
         <div className="home-hero-main wood-panel">
-          <p className="home-hero-label">工作台</p>
+          <p className="home-hero-label">Workbench</p>
           <h2>开始你的下一张画布</h2>
           <p>
             支持多画布管理、自动保存、连线与节点样式配置。交互已优化，空白区域可直接创建内容。
@@ -177,11 +177,15 @@ export function HomePage() {
             <p className="home-empty">还没有画布，点击「新建画布」开始。</p>
           ) : (
             <ul className="home-cards">
-              {items.map((it) => (
+              {items.map((it, idx) => (
                 <li key={it.id} className="home-card">
+                  <div className="home-card-pin" aria-hidden>
+                    <span />
+                  </div>
                   <Link to={`/c/${it.id}`} className="home-card-link">
                     <div className="home-card-title">{it.title}</div>
                     <div className="home-card-meta">{new Date(it.updatedAt).toLocaleString()}</div>
+                    <div className="home-card-chip">#{idx + 1}</div>
                   </Link>
                   <div className="home-card-actions">
                     <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => onRename(it.id)}>
