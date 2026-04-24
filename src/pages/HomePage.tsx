@@ -104,123 +104,109 @@ export function HomePage() {
   const guestUsage = `${Math.min(totalCount, GUEST_MAX_CANVASES)}/${GUEST_MAX_CANVASES}`;
 
   return (
-    <div className="home-page home-shell skeuo-home">
-      <header className="home-topbar">
-        <div>
-          <h1 className="home-title">001 思维导图</h1>
-          <p className="home-sub">纯净画布，快速记录，自动保存</p>
-        </div>
-        <div className="home-auth">
-          {user ? (
-            <>
-              <span className="home-pill home-pill-ok">{user.email ?? user.displayName ?? "已登录"}</span>
-              <button type="button" className="toolbar-btn" onClick={() => void signOutApp()}>
-                退出
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="button" className="toolbar-btn primary" onClick={() => void signInWithGoogle()}>
-                Google 登录
-              </button>
-              <span className="home-pill home-pill-warn">试用模式</span>
-            </>
-          )}
-        </div>
-      </header>
+    <div className="home-page home-shell console-home">
+      <div className="console-frame">
+        <header className="console-header">
+          <div className="console-brand">
+            <p className="console-brand-tag">Mind Map Studio</p>
+            <h1 className="home-title">001 思维导图</h1>
+            <p className="home-sub">统一材质工作台 · 木质承载内容 · 金属承载控制</p>
+          </div>
+          <div className="console-auth">
+            {user ? (
+              <>
+                <span className="console-status console-status-ok">{user.email ?? user.displayName ?? "已登录"}</span>
+                <button type="button" className="home-btn home-btn-metal" onClick={() => void signOutApp()}>
+                  退出
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" className="home-btn home-btn-metal home-btn-primary" onClick={() => void signInWithGoogle()}>
+                  Google 登录
+                </button>
+                <span className="console-status console-status-warn">试用模式</span>
+              </>
+            )}
+          </div>
+        </header>
 
-      <section className="home-hero">
-        <div className="home-hero-main wood-panel">
-          <p className="home-hero-label">Workbench</p>
-          <h2>开始你的下一张画布</h2>
-          <p>
-            支持多画布管理、自动保存、连线与节点样式配置。交互已优化，空白区域可直接创建内容。
-          </p>
-          <div className="home-hero-actions">
-            <button type="button" className="toolbar-btn primary home-cta skeuo-wood-btn" onClick={() => void onNew()}>
-              + 新建画布
-            </button>
-          </div>
-        </div>
-        <div className="home-hero-stats metal-panel">
-          <div className="home-stat-card">
-            <span>画布数量</span>
-            <strong>{totalCount}</strong>
-          </div>
-          <div className="home-stat-card">
-            <span>账户状态</span>
-            <strong>{user ? "云端已启用" : "本地试用中"}</strong>
-          </div>
-          {!user && (
-            <div className="home-stat-card">
-              <span>试用容量</span>
-              <strong>{guestUsage}</strong>
+        <div className="console-control-strip">
+          <button type="button" className="home-btn home-btn-wood" onClick={() => void onNew()}>
+            + 新建画布
+          </button>
+          <button type="button" className="home-btn home-btn-metal" onClick={() => void refresh()}>
+            刷新
+          </button>
+          <div className="console-meter" aria-label="overview">
+            <div className="console-meter-item">
+              <span>画布</span>
+              <strong>{totalCount}</strong>
             </div>
-          )}
-          <div className="metal-knob" aria-hidden>
-            <div className="metal-knob-core" />
+            <div className="console-meter-item">
+              <span>状态</span>
+              <strong>{user ? "云端" : `本地 ${guestUsage}`}</strong>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="home-layout">
-        <div className="home-list panel wood-panel-subtle">
-          <div className="panel-head">
-            <h2>我的画布</h2>
-            <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => void refresh()}>
-              刷新
-            </button>
+          <div className="console-knob" aria-hidden>
+            <div className="console-knob-core" />
           </div>
-          {listLoading ? (
-            <p className="home-empty">加载列表…</p>
-          ) : items.length === 0 ? (
-            <p className="home-empty">还没有画布，点击「新建画布」开始。</p>
-          ) : (
-            <ul className="home-cards">
-              {items.map((it, idx) => (
-                <li key={it.id} className="home-card">
-                  <div className="home-card-pin" aria-hidden>
-                    <span />
-                  </div>
-                  <Link to={`/c/${it.id}`} className="home-card-link">
-                    <div className="home-card-title">{it.title}</div>
-                    <div className="home-card-meta">{new Date(it.updatedAt).toLocaleString()}</div>
-                    <div className="home-card-chip">#{idx + 1}</div>
-                  </Link>
-                  <div className="home-card-actions">
-                    <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => onRename(it.id)}>
-                      重命名
-                    </button>
-                    <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => onDelete(it.id)}>
-                      删除
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
 
-        <aside className="panel home-side metal-panel">
-          <h3>说明</h3>
-          {!user ? (
-            <div className="trial-banner trial-banner--warn home-trial">
-              <strong>试用阶段：</strong>
-              当前未登录，画布仅保存在本机浏览器，不会同步到云端，也不会被他人看到。请登录以启用账号隔离与跨设备访问。
+        <section className="console-content-grid">
+          <div className="console-panel console-panel-wood">
+            <div className="console-panel-head">
+              <h2>我的画布</h2>
             </div>
-          ) : (
-            <div className="trial-banner trial-banner--ok home-trial">
-              <strong>云端已启用：</strong>
-              你的画布会自动保存到当前账号，默认仅你本人可访问。
+            {listLoading ? (
+              <p className="home-empty">加载列表…</p>
+            ) : items.length === 0 ? (
+              <p className="home-empty">还没有画布，点击「新建画布」开始。</p>
+            ) : (
+              <ul className="console-card-list">
+                {items.map((it, idx) => (
+                  <li key={it.id} className="console-card">
+                    <div className="console-card-screw" aria-hidden />
+                    <Link to={`/c/${it.id}`} className="console-card-main">
+                      <div className="home-card-title">{it.title}</div>
+                      <div className="home-card-meta">{new Date(it.updatedAt).toLocaleString()}</div>
+                      <div className="console-card-index">#{idx + 1}</div>
+                    </Link>
+                    <div className="console-card-actions">
+                      <button type="button" className="home-btn home-btn-metal" onClick={() => onRename(it.id)}>
+                        重命名
+                      </button>
+                      <button type="button" className="home-btn home-btn-metal" onClick={() => onDelete(it.id)}>
+                        删除
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <aside className="console-panel console-panel-metal">
+            <div className="console-panel-head">
+              <h3>账号与存储</h3>
             </div>
-          )}
-          {!cloudAvailable && (
-            <p className="home-hint">
-              当前站点还未读取到 Firebase 环境变量，若登录异常请检查仓库 Secrets 与部署状态。
-            </p>
-          )}
-        </aside>
-      </section>
+            {!user ? (
+              <div className="console-note console-note-warn">
+                <strong>试用阶段：</strong>
+                当前未登录，画布仅保存在本机浏览器，不会同步到云端，也不会被他人看到。请登录以启用账号隔离与跨设备访问。
+              </div>
+            ) : (
+              <div className="console-note console-note-ok">
+                <strong>云端已启用：</strong>
+                你的画布会自动保存到当前账号，默认仅你本人可访问。
+              </div>
+            )}
+            {!cloudAvailable && (
+              <p className="home-hint">当前站点未读取到 Firebase 环境变量，登录异常时请检查 Secrets 与部署状态。</p>
+            )}
+          </aside>
+        </section>
+      </div>
     </div>
   );
 }
