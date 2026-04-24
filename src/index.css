@@ -2015,3 +2015,356 @@ button.toolbar-btn.primary:active {
     0 0 0 #a1afc4,
     0 1px 3px rgba(30, 41, 59, 0.1);
 }
+
+/* —— Microsoft Fluent–inspired shell + purple signature accents —— */
+:root {
+  --ms-bg: #f3f2f1;
+  --ms-surface: #ffffff;
+  --ms-border: #edebe9;
+  --ms-text: #323130;
+  --ms-text-secondary: #605e5c;
+  --ms-purple: #5b2c91;
+  --ms-purple-soft: #e8dcef;
+  --ms-purple-line: #7c3aed;
+  --ms-shadow: 0 1.6px 3.6px rgba(0, 0, 0, 0.08), 0 0.3px 0.9px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  background: var(--ms-bg);
+  color: var(--ms-text);
+}
+
+.home-page.home-shell.console-home {
+  background: radial-gradient(1200px 600px at 85% -10%, rgba(124, 58, 237, 0.06), transparent 55%), var(--ms-bg);
+}
+
+.console-home .console-frame {
+  border: 1px solid var(--ms-border);
+  border-left: 3px solid var(--ms-purple-line);
+  border-radius: 0;
+  background: var(--ms-surface);
+  box-shadow: var(--ms-shadow);
+  padding: 28px 32px;
+  gap: 20px;
+}
+
+.console-home .console-frame::before,
+.console-home .console-frame::after {
+  display: none;
+}
+
+.console-home .console-header {
+  padding-bottom: 16px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--ms-border);
+}
+
+.console-home .console-header::after {
+  display: none;
+}
+
+.console-home .console-brand .home-title {
+  color: var(--ms-text);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-shadow: none;
+}
+
+.console-home .console-brand-tag {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-bg);
+  color: var(--ms-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-left: 2px solid var(--ms-purple-line);
+}
+
+.console-home .console-status {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-bg);
+  color: var(--ms-text);
+}
+
+.console-home .console-status-ok {
+  color: #107c10;
+}
+
+.console-home .console-status-warn {
+  color: #8a6534;
+}
+
+.console-home .console-control-strip {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-surface);
+  box-shadow: none;
+  padding: 14px 16px;
+  gap: 12px;
+}
+
+.console-home .console-panel {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-surface);
+  box-shadow: none;
+}
+
+.console-home .console-panel::before {
+  display: none;
+}
+
+.console-home .console-panel-head h2,
+.console-home .console-panel-head h3 {
+  position: relative;
+  padding-left: 12px;
+  margin: 0 0 12px;
+  font-weight: 600;
+  color: var(--ms-text);
+  letter-spacing: -0.01em;
+}
+
+.console-home .console-panel-head h2::before,
+.console-home .console-panel-head h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--ms-purple-line), var(--ms-purple));
+}
+
+.console-home .console-panel-wood,
+.console-home .console-panel-metal {
+  border-color: var(--ms-border);
+  background: var(--ms-surface);
+}
+
+.console-home .console-card {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-surface);
+  box-shadow: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.console-home .console-card:hover {
+  transform: none;
+  border-color: #c8c6c4;
+  box-shadow: var(--ms-shadow);
+}
+
+.console-home .console-card-index {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-bg);
+  color: var(--ms-text-secondary);
+}
+
+.console-home .home-btn {
+  border-radius: 0;
+  min-height: 36px;
+  padding: 0 18px;
+  font-weight: 600;
+}
+
+.console-home .home-btn::before {
+  display: none;
+}
+
+.console-home .home-btn-wood {
+  border: 1px solid #201f1e;
+  background: #201f1e;
+  color: #ffffff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.console-home .home-btn-wood:hover {
+  filter: brightness(1.06);
+}
+
+.console-home .home-btn-wood:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.console-home .home-btn-metal {
+  border: 1px solid #201f1e;
+  background: transparent;
+  color: #201f1e;
+  box-shadow: none;
+}
+
+.console-home .home-btn-metal:hover {
+  background: var(--ms-bg);
+}
+
+.console-home .home-btn-metal:active {
+  transform: translateY(1px);
+  background: var(--ms-purple-soft);
+  border-color: var(--ms-purple);
+  color: var(--ms-purple);
+}
+
+.console-home .home-btn-primary.home-btn-metal {
+  border-color: var(--ms-purple);
+  color: var(--ms-purple);
+  background: var(--ms-surface);
+}
+
+.console-home .home-btn:active.home-btn-wood,
+.console-home .home-btn:active.home-btn-metal {
+  filter: none;
+}
+
+.console-home .console-meter-item {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-bg);
+  box-shadow: none;
+}
+
+.console-home .console-note {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  border-left: 3px solid var(--ms-purple-line);
+  background: #faf9f8;
+  box-shadow: none;
+}
+
+.console-home .console-note-warn {
+  background: #fff9f5;
+  border-color: #edebe9;
+  border-left-color: #ca5010;
+  color: #605e5c;
+}
+
+.console-home .console-note-ok {
+  background: #f3faf4;
+  border-color: #edebe9;
+  border-left-color: #107c10;
+  color: #605e5c;
+}
+
+.console-home .home-hint {
+  color: var(--ms-text-secondary);
+  border-top: 1px solid var(--ms-purple-soft);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.console-home .home-empty {
+  color: var(--ms-text-secondary);
+}
+
+.console-home .console-knob {
+  border-radius: 50%;
+  border: 1px solid var(--ms-border);
+  box-shadow: var(--ms-shadow);
+}
+
+.toolbar,
+.toolbar-home-row {
+  background: var(--ms-surface);
+  border-color: var(--ms-border);
+}
+
+.toolbar {
+  border-bottom: 1px solid var(--ms-border);
+}
+
+.toolbar-label {
+  color: var(--ms-text-secondary);
+}
+
+.format-toolbar {
+  background: #faf9f8;
+  border-bottom: 1px solid var(--ms-border);
+}
+
+.trial-banner {
+  border-bottom: 1px solid var(--ms-border);
+}
+
+.trial-banner--warn {
+  background: #fff4ce;
+  color: #323130;
+  border-left: 3px solid #ca5010;
+}
+
+.trial-banner--ok {
+  background: #dff6dd;
+  color: #323130;
+  border-left: 3px solid #107c10;
+}
+
+.canvas-wrap {
+  background: var(--ms-bg);
+}
+
+.hint-card {
+  border: 1px solid var(--ms-border);
+  border-left: 3px solid var(--ms-purple-line);
+  border-radius: 0;
+  background: var(--ms-surface);
+  box-shadow: var(--ms-shadow);
+}
+
+.canvas-empty-state {
+  border-radius: 0;
+  border: 1px dashed var(--ms-border);
+  border-left: 3px solid var(--ms-purple-line);
+  background: var(--ms-surface);
+  box-shadow: var(--ms-shadow);
+}
+
+.page-loading {
+  background: var(--ms-bg);
+  color: var(--ms-text-secondary);
+}
+
+.toolbar-status-pill {
+  border-radius: 0;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-bg);
+  color: var(--ms-text-secondary);
+}
+
+.doc-title-edit input {
+  border-radius: 0;
+  border-color: var(--ms-border);
+}
+
+.doc-title-edit input:focus {
+  outline: 1px solid var(--ms-purple-line);
+  border-color: var(--ms-purple-line);
+}
+
+.node-card {
+  border-radius: 0;
+  border-color: var(--ms-border);
+  box-shadow: var(--ms-shadow);
+}
+
+.node-card.selected {
+  border-color: var(--ms-purple);
+  box-shadow: 0 0 0 1px var(--ms-purple-line);
+}
+
+.node-chrome {
+  border-radius: 0;
+  border-color: var(--ms-border);
+}
+
+.node-chrome-btn {
+  border-radius: 0;
+}
+
+.draft-rect {
+  border-color: var(--ms-purple-line);
+}
