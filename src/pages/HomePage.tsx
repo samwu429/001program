@@ -102,6 +102,7 @@ export function HomePage() {
 
   const totalCount = items.length;
   const guestUsage = `${Math.min(totalCount, GUEST_MAX_CANVASES)}/${GUEST_MAX_CANVASES}`;
+  const modeText = user ? "云端账号模式" : "本地试用模式";
 
   return (
     <div className="home-page home-shell console-home">
@@ -205,6 +206,38 @@ export function HomePage() {
               <p className="home-hint">当前站点未读取到 Firebase 环境变量，登录异常时请检查 Secrets 与部署状态。</p>
             )}
           </aside>
+        </section>
+
+        <section className="console-bottom-grid">
+          <div className="console-panel console-panel-metal">
+            <div className="console-panel-head">
+              <h3>快捷操作</h3>
+            </div>
+            <div className="console-quick-list">
+              <button type="button" className="home-btn home-btn-wood" onClick={() => void onNew()}>
+                新建空白画布
+              </button>
+              <button type="button" className="home-btn home-btn-metal" onClick={() => void refresh()}>
+                同步列表
+              </button>
+              {!user && (
+                <button type="button" className="home-btn home-btn-metal home-btn-primary" onClick={() => void signInWithGoogle()}>
+                  登录并开启云端
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="console-panel console-panel-wood">
+            <div className="console-panel-head">
+              <h3>工作台状态</h3>
+            </div>
+            <div className="console-badge-row">
+              <span className="console-card-index">{modeText}</span>
+              <span className="console-card-index">当前画布 {totalCount}</span>
+              <span className="console-card-index">{user ? "可跨设备访问" : `本地上限 ${guestUsage}`}</span>
+            </div>
+          </div>
         </section>
       </div>
     </div>
