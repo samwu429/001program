@@ -5,7 +5,7 @@ import { getGuestCanvasData, listGuestCanvases, saveGuestCanvas } from "../docum
 import { getCloudCanvas, saveCloudCanvas } from "../documents/cloudCanvases";
 import { MindMapWorkspace } from "../components/MindMapWorkspace";
 import { initialState, serializeState } from "../mindMapReducer";
-import { useI18n } from "../i18n";
+import { getCurrentLang, tr, useI18n } from "../i18n";
 
 const EMPTY_DOC = serializeState(initialState);
 
@@ -43,7 +43,7 @@ export function EditorPage() {
             return;
           }
           const meta = listGuestCanvases().find((x) => x.id === docId);
-          setTitle(meta?.title ?? t("unnamedCanvas"));
+          setTitle(meta?.title ?? tr(getCurrentLang(), "unnamedCanvas"));
           setPayload(raw);
         }
       } finally {
@@ -53,7 +53,7 @@ export function EditorPage() {
     return () => {
       cancelled = true;
     };
-  }, [docId, user, navigate, t]);
+  }, [docId, user, navigate]);
 
   const persistTitle = useCallback(() => {
     if (!docId) return;

@@ -84,6 +84,24 @@ function withHistory(prev: MindMapState, next: MindMapState): MindMapState {
   return { ...next, historyPast: past, historyFuture: [] };
 }
 
+function isSameNodeTextAsLastSnapshot(state: MindMapState, id: string): boolean {
+  const last = state.historyPast[state.historyPast.length - 1];
+  if (!last) return false;
+  const cur = state.nodes[id];
+  const prev = last.nodes[id];
+  if (!cur || !prev) return false;
+  return cur.text === prev.text;
+}
+
+function isSameNodeBoundsAsLastSnapshot(state: MindMapState, id: string): boolean {
+  const last = state.historyPast[state.historyPast.length - 1];
+  if (!last) return false;
+  const cur = state.nodes[id];
+  const prev = last.nodes[id];
+  if (!cur || !prev) return false;
+  return cur.x === prev.x && cur.y === prev.y && cur.width === prev.width && cur.height === prev.height;
+}
+
 function closestNodeForAutoLink(
   nodes: Record<string, MindNode>,
   order: string[],
@@ -259,6 +277,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
     }
     case "node/commitText": {
       if (!state.nodes[action.id]) return state;
+      if (isSameNodeTextAsLastSnapshot(state, action.id)) return state;
       return withHistory(state, { ...state });
     }
     case "node/addImages": {
@@ -321,6 +340,7 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
     }
     case "node/setBoundsCommit": {
       if (!state.nodes[action.id]) return state;
+      if (isSameNodeBoundsAsLastSnapshot(state, action.id)) return state;
       return withHistory(state, { ...state });
     }
     case "node/delete": {
