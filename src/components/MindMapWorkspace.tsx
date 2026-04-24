@@ -6,6 +6,7 @@ import {
   serializeState,
 } from "../mindMapReducer";
 import { MindMapCanvas } from "./MindMapCanvas";
+import { SiteFooter } from "./SiteFooter";
 import type { ImportJsonOutcome } from "./ImportJsonDialog";
 import { Toolbar, validateImportedDoc } from "./Toolbar";
 import type { GridMode } from "../types";
@@ -190,6 +191,7 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
         />
       </div>
       <MindMapCanvas state={state} dispatch={dispatch as React.Dispatch<MindMapAction>} />
+      <SiteFooter />
     </div>
   );
 }

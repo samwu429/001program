@@ -12,6 +12,7 @@ import {
 } from "../documents/guestCanvases";
 import { createCloudCanvas, deleteCloudCanvas, getCloudCanvas, listCloudCanvases, saveCloudCanvas } from "../documents/cloudCanvases";
 import { initialState, serializeState } from "../mindMapReducer";
+import { SiteFooter } from "../components/SiteFooter";
 import heroArt from "../assets/hero-dashboard.png";
 
 const EMPTY = serializeState(initialState);
@@ -265,6 +266,7 @@ export function HomePage() {
           </div>
         </section>
       </div>
+      <SiteFooter />
     </div>
   );
 }
