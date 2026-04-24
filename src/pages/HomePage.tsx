@@ -104,7 +104,7 @@ export function HomePage() {
   const guestUsage = `${Math.min(totalCount, GUEST_MAX_CANVASES)}/${GUEST_MAX_CANVASES}`;
 
   return (
-    <div className="home-page home-shell">
+    <div className="home-page home-shell skeuo-home">
       <header className="home-topbar">
         <div>
           <h1 className="home-title">001 思维导图</h1>
@@ -130,19 +130,19 @@ export function HomePage() {
       </header>
 
       <section className="home-hero">
-        <div className="home-hero-main">
+        <div className="home-hero-main wood-panel">
           <p className="home-hero-label">工作台</p>
           <h2>开始你的下一张画布</h2>
           <p>
             支持多画布管理、自动保存、连线与节点样式配置。交互已优化，空白区域可直接创建内容。
           </p>
           <div className="home-hero-actions">
-            <button type="button" className="toolbar-btn primary home-cta" onClick={() => void onNew()}>
+            <button type="button" className="toolbar-btn primary home-cta skeuo-wood-btn" onClick={() => void onNew()}>
               + 新建画布
             </button>
           </div>
         </div>
-        <div className="home-hero-stats">
+        <div className="home-hero-stats metal-panel">
           <div className="home-stat-card">
             <span>画布数量</span>
             <strong>{totalCount}</strong>
@@ -157,14 +157,17 @@ export function HomePage() {
               <strong>{guestUsage}</strong>
             </div>
           )}
+          <div className="metal-knob" aria-hidden>
+            <div className="metal-knob-core" />
+          </div>
         </div>
       </section>
 
       <section className="home-layout">
-        <div className="home-list panel">
+        <div className="home-list panel wood-panel-subtle">
           <div className="panel-head">
             <h2>我的画布</h2>
-            <button type="button" className="toolbar-btn" onClick={() => void refresh()}>
+            <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => void refresh()}>
               刷新
             </button>
           </div>
@@ -181,10 +184,10 @@ export function HomePage() {
                     <div className="home-card-meta">{new Date(it.updatedAt).toLocaleString()}</div>
                   </Link>
                   <div className="home-card-actions">
-                    <button type="button" className="toolbar-btn" onClick={() => onRename(it.id)}>
+                    <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => onRename(it.id)}>
                       重命名
                     </button>
-                    <button type="button" className="toolbar-btn" onClick={() => onDelete(it.id)}>
+                    <button type="button" className="toolbar-btn skeuo-metal-btn" onClick={() => onDelete(it.id)}>
                       删除
                     </button>
                   </div>
@@ -194,7 +197,7 @@ export function HomePage() {
           )}
         </div>
 
-        <aside className="panel home-side">
+        <aside className="panel home-side metal-panel">
           <h3>说明</h3>
           {!user ? (
             <div className="trial-banner trial-banner--warn home-trial">
