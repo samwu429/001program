@@ -47,10 +47,12 @@ export type MindMapAction =
   | { type: "select/node"; id: string | null }
   | { type: "select/edge"; id: string | null }
   | { type: "node/updateText"; id: string; text: string }
+  | { type: "node/commitText"; id: string }
   | { type: "node/addImages"; id: string; images: MindNode["images"] }
   | { type: "node/setStyle"; id: string; fontSize?: number; fontFamily?: string; borderColor?: string }
   | { type: "edge/setStyle"; id: string; color?: string; width?: number }
-  | { type: "node/setBounds"; id: string; x: number; y: number; width: number; height: number }
+  | { type: "node/setBoundsPreview"; id: string; x: number; y: number; width: number; height: number }
+  | { type: "node/setBoundsCommit"; id: string }
   | { type: "node/delete"; id: string }
   | { type: "delete/selection" }
   | { type: "grid/set"; mode: GridMode }
@@ -249,10 +251,15 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
     case "node/updateText": {
       const n = state.nodes[action.id];
       if (!n) return state;
-      return withHistory(state, {
+      if (n.text === action.text) return state;
+      return {
         ...state,
         nodes: { ...state.nodes, [action.id]: { ...n, text: action.text } },
-      });
+      };
+    }
+    case "node/commitText": {
+      if (!state.nodes[action.id]) return state;
+      return withHistory(state, { ...state });
     }
     case "node/addImages": {
       const n = state.nodes[action.id];
@@ -294,10 +301,11 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
             : e
         ),
       });
-    case "node/setBounds": {
+    case "node/setBoundsPreview": {
       const n = state.nodes[action.id];
       if (!n) return state;
-      return withHistory(state, {
+      if (n.x === action.x && n.y === action.y && n.width === action.width && n.height === action.height) return state;
+      return {
         ...state,
         nodes: {
           ...state.nodes,
@@ -309,7 +317,11 @@ export function mindMapReducer(state: MindMapState, action: MindMapAction): Mind
             height: action.height,
           },
         },
-      });
+      };
+    }
+    case "node/setBoundsCommit": {
+      if (!state.nodes[action.id]) return state;
+      return withHistory(state, { ...state });
     }
     case "node/delete": {
       const id = action.id;

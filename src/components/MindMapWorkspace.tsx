@@ -9,6 +9,7 @@ import { MindMapCanvas } from "./MindMapCanvas";
 import { Toolbar, validateImportedDoc } from "./Toolbar";
 import type { GridMode } from "../types";
 import type { MindMapAction } from "../mindMapReducer";
+import { useI18n } from "../i18n";
 
 type Props = {
   initialDataJson: string | null;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Props) {
+  const { t, lang, setLang } = useI18n();
   const [state, dispatch] = useReducer(mindMapReducer, initialDataJson, (raw) => {
     if (!raw) return initialState;
     try {
@@ -98,23 +100,23 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
       try {
         raw = JSON.parse(text) as unknown;
       } catch {
-        window.alert("JSON 解析失败");
+        window.alert(t("jsonParseFail"));
         return;
       }
       const doc = validateImportedDoc(raw);
       if (!doc) {
-        window.alert("文件格式不正确");
+        window.alert(t("invalidFormat"));
         return;
       }
       dispatch({ type: "persist/load", state: doc });
     },
-    [dispatch]
+    [dispatch, t]
   );
 
   const onClearBoard = useCallback(() => {
-    if (!window.confirm("确定清空画布？未导出内容将丢失。")) return;
+    if (!window.confirm(t("clearConfirm"))) return;
     dispatch({ type: "board/clear" });
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   return (
     <div className="app-shell">
@@ -129,8 +131,11 @@ export function MindMapWorkspace({ initialDataJson, onPersist, trialBanner }: Pr
       <div className="toolbar-stack">
         <div className="toolbar-home-row">
           <Link to="/" className="toolbar-btn">
-            ← 主页
+            ← {t("home")}
           </Link>
+          <button type="button" className="toolbar-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")}>
+            {t("language")} {lang === "en" ? t("chinese") : t("english")}
+          </button>
         </div>
         <Toolbar
           state={state}

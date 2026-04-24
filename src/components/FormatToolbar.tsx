@@ -3,6 +3,7 @@ import type { MindMapAction } from "../mindMapReducer";
 import type { MindMapState } from "../types";
 import { execDocCommand, isRichTextEditorFocused } from "../formatExec";
 import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "../viewportConstants";
+import { useI18n } from "../i18n";
 
 const FONT_OPTIONS: { label: string; value: string }[] = [
   { label: "Arial", value: "Arial, Helvetica, sans-serif" },
@@ -10,7 +11,7 @@ const FONT_OPTIONS: { label: string; value: string }[] = [
   { label: "Times New Roman", value: '"Times New Roman", Times, serif' },
   { label: "Courier New", value: '"Courier New", Courier, monospace' },
   { label: "Verdana", value: "Verdana, Geneva, sans-serif" },
-  { label: "系统 UI", value: "system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif" },
+  { label: "System UI", value: "system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif" },
 ];
 
 type Props = {
@@ -25,12 +26,12 @@ function preventLoseSelection(e: React.MouseEvent) {
   e.preventDefault();
 }
 
-function StyleBlockSelect({ disabled }: { disabled: boolean }) {
+function StyleBlockSelect({ disabled, t }: { disabled: boolean; t: (k: string, p?: Record<string, string | number>) => string }) {
   const [value, setValue] = useState("p");
   return (
     <select
       className="ft-select ft-select--wide"
-      aria-label="段落样式"
+      aria-label={t("paragraphStyle")}
       disabled={disabled}
       value={value}
       onMouseDown={preventLoseSelection}
@@ -40,10 +41,10 @@ function StyleBlockSelect({ disabled }: { disabled: boolean }) {
         execDocCommand("formatBlock", v === "p" ? "p" : v);
       }}
     >
-      <option value="p">普通文本</option>
-      <option value="h1">标题 1</option>
-      <option value="h2">标题 2</option>
-      <option value="h3">标题 3</option>
+      <option value="p">{t("normalText")}</option>
+      <option value="h1">{t("heading1")}</option>
+      <option value="h2">{t("heading2")}</option>
+      <option value="h3">{t("heading3")}</option>
     </select>
   );
 }
@@ -58,10 +59,10 @@ function zoomCanvas(dispatch: Dispatch<MindMapAction>, scale: number, factor: nu
   dispatch({ type: "viewport/zoom", lx, ly, nextScale: next });
 }
 
-function printOccupiedCanvas(state: MindMapState) {
+function printOccupiedCanvas(state: MindMapState, t: (k: string, p?: Record<string, string | number>) => string) {
   const nodes = state.nodeOrder.map((id) => state.nodes[id]).filter(Boolean);
   if (nodes.length === 0) {
-    window.alert("当前没有可打印的框");
+    window.alert(t("printEmpty"));
     return;
   }
   let minX = Number.POSITIVE_INFINITY;
@@ -121,6 +122,7 @@ function printOccupiedCanvas(state: MindMapState) {
 }
 
 export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, onFontFamily }: Props) {
+  const { t } = useI18n();
   const sel = state.selectedNodeId ? state.nodes[state.selectedNodeId] : undefined;
   const textDisabled = !isRichTextEditorFocused();
   const edge = state.selectedEdgeId ? state.edges.find((e) => e.id === state.selectedEdgeId) : undefined;
@@ -130,14 +132,14 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
   const fontValue = FONT_OPTIONS.some((o) => o.value === ff) ? ff : FONT_OPTIONS[0].value;
 
   return (
-    <div className="format-toolbar" aria-label="文本格式">
+    <div className="format-toolbar" aria-label={t("richFormatAria")}>
       <div className="format-toolbar-inner">
         <div className="ft-group">
           <button
             type="button"
             className="ft-icon-btn"
-            title="撤销"
-            aria-label="撤销"
+            title={t("undo")}
+            aria-label={t("undo")}
             disabled={textDisabled && state.historyPast.length === 0}
             onMouseDown={preventLoseSelection}
             onClick={() => {
@@ -149,8 +151,8 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="重做"
-            aria-label="重做"
+            title={t("redo")}
+            aria-label={t("redo")}
             disabled={textDisabled && state.historyFuture.length === 0}
             onMouseDown={preventLoseSelection}
             onClick={() => {
@@ -162,12 +164,12 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-text-btn"
-            title="打印页面"
-            aria-label="打印"
+            title={t("print")}
+            aria-label={t("print")}
             onMouseDown={preventLoseSelection}
-            onClick={() => printOccupiedCanvas(state)}
+            onClick={() => printOccupiedCanvas(state, t)}
           >
-            打印
+            {t("print")}
           </button>
         </div>
         <span className="ft-divider" />
@@ -176,8 +178,8 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-zoom-btn"
-            title="缩小画布"
-            aria-label="缩小"
+            title={t("zoomOut")}
+            aria-label={t("zoomOut")}
             onClick={() => zoomCanvas(dispatch, state.viewport.scale, 0.92)}
           >
             −
@@ -186,8 +188,8 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-zoom-btn"
-            title="放大画布"
-            aria-label="放大"
+            title={t("zoomIn")}
+            aria-label={t("zoomIn")}
             onClick={() => zoomCanvas(dispatch, state.viewport.scale, 1.08)}
           >
             +
@@ -195,13 +197,13 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
         </div>
         <span className="ft-divider" />
 
-        <StyleBlockSelect disabled={textDisabled} />
+        <StyleBlockSelect disabled={textDisabled} t={t} />
         <span className="ft-divider" />
 
         <div className="ft-group">
           <select
             className="ft-select"
-            aria-label="字体"
+            aria-label={t("font")}
             disabled={!sel}
             value={fontValue}
             onMouseDown={preventLoseSelection}
@@ -216,7 +218,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-num-btn"
-            title="字号 −1"
+            title={t("fontDown")}
             disabled={!sel}
             onMouseDown={preventLoseSelection}
             onClick={() => onFontSize(Math.max(10, selectedFontSize - 1))}
@@ -227,7 +229,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-num-btn"
-            title="字号 +1"
+            title={t("fontUp")}
             disabled={!sel}
             onMouseDown={preventLoseSelection}
             onClick={() => onFontSize(Math.min(36, selectedFontSize + 1))}
@@ -241,7 +243,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn ft-strong"
-            title="粗体"
+            title={t("bold")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("bold")}
@@ -251,7 +253,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn ft-italic"
-            title="斜体"
+            title={t("italic")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("italic")}
@@ -261,7 +263,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn ft-under"
-            title="下划线"
+            title={t("underline")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("underline")}
@@ -271,28 +273,28 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="删除线"
+            title={t("strikethrough")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("strikeThrough")}
           >
             <span className="ft-strike">S</span>
           </button>
-          <label className="ft-color" title="文字颜色">
+          <label className="ft-color" title={t("textColor")}>
             <span className="ft-color-a">A</span>
             <input
               type="color"
-              aria-label="文字颜色"
+              aria-label={t("textColor")}
               disabled={textDisabled}
               onMouseDown={preventLoseSelection}
               onChange={(e) => execDocCommand("foreColor", e.target.value)}
             />
           </label>
-          <label className="ft-color ft-hi" title="高亮">
+          <label className="ft-color ft-hi" title={t("highlight")}>
             <span className="ft-hi-icon">▉</span>
             <input
               type="color"
-              aria-label="高亮颜色"
+              aria-label={t("highlight")}
               disabled={textDisabled}
               defaultValue="#fff59d"
               onMouseDown={preventLoseSelection}
@@ -306,25 +308,25 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="插入链接"
+            title={t("link")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => {
-              const u = window.prompt("链接地址（https://…）", "https://");
+              const u = window.prompt(t("linkPrompt"), "https://");
               if (u) execDocCommand("createLink", u);
             }}
           >
-            链
+            {t("link")}
           </button>
           <button
             type="button"
             className="ft-icon-btn"
-            title="清除格式"
+            title={t("clearFormat")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("removeFormat")}
           >
-            清
+            {t("clearFormat")}
           </button>
         </div>
         <span className="ft-divider" />
@@ -333,7 +335,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="左对齐"
+            title={t("alignLeft")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("justifyLeft")}
@@ -343,7 +345,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="居中"
+            title={t("alignCenter")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("justifyCenter")}
@@ -353,7 +355,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="右对齐"
+            title={t("alignRight")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("justifyRight")}
@@ -367,7 +369,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="项目符号"
+            title={t("bullets")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("insertUnorderedList")}
@@ -377,7 +379,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="编号列表"
+            title={t("numbered")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("insertOrderedList")}
@@ -387,7 +389,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="减少缩进"
+            title={t("outdent")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("outdent")}
@@ -397,7 +399,7 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
           <button
             type="button"
             className="ft-icon-btn"
-            title="增加缩进"
+            title={t("indent")}
             disabled={textDisabled}
             onMouseDown={preventLoseSelection}
             onClick={() => execDocCommand("indent")}
@@ -408,11 +410,11 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
 
         <span className="ft-divider" />
         <div className="ft-group">
-          <label className="ft-color" title="框线颜色">
-            <span className="ft-color-a">框</span>
+          <label className="ft-color" title={t("borderColor")}>
+            <span className="ft-color-a">{t("boxLabel")}</span>
             <input
               type="color"
-              aria-label="框线颜色"
+              aria-label={t("borderColor")}
               disabled={!sel}
               value={sel?.borderColor ?? "#e2e4e8"}
               onChange={(e) =>
@@ -420,11 +422,11 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
               }
             />
           </label>
-          <label className="ft-color" title="连线颜色">
-            <span className="ft-color-a">线</span>
+          <label className="ft-color" title={t("edgeColor")}>
+            <span className="ft-color-a">{t("lineLabel")}</span>
             <input
               type="color"
-              aria-label="连线颜色"
+              aria-label={t("edgeColor")}
               disabled={!edge}
               value={edge?.color ?? "#94a3b8"}
               onChange={(e) =>
@@ -443,8 +445,8 @@ export function FormatToolbar({ state, dispatch, selectedFontSize, onFontSize, o
             onChange={(e) =>
               edge && dispatch({ type: "edge/setStyle", id: edge.id, width: Number(e.target.value) })
             }
-            title="连线粗细"
-            aria-label="连线粗细"
+            title={t("edgeWidth")}
+            aria-label={t("edgeWidth")}
           />
           <span className="ft-num-val">{edge?.width ?? 2}px</span>
         </div>

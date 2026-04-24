@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { User } from "firebase/auth";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { firebaseConfigured, getFirebaseAuth } from "../firebase/client";
+import { getCurrentLang, tr } from "../i18n";
 
 type AuthCtx = {
   user: User | null;
@@ -31,9 +32,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
+    const lang = getCurrentLang();
     const auth = getFirebaseAuth();
     if (!auth) {
-      window.alert("未配置 Firebase：请在项目根目录添加 .env.local（参考 env.example），并启用 Google 登录。");
+      window.alert(tr(lang, "firebaseMissing"));
       return;
     }
     const provider = new GoogleAuthProvider();
@@ -42,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signInWithPopup(auth, provider);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "unknown error";
-      window.alert(`Google 登录失败：${msg}`);
+      window.alert(tr(lang, "googleSignInFail", { msg }));
     }
   }, []);
 

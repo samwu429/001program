@@ -47,6 +47,33 @@ body {
   background: var(--bg);
 }
 
+.canvas-empty-state {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 14px;
+  border: 1px dashed #c9d3e3;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  padding: 14px 16px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.canvas-empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.canvas-empty-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
 .canvas-wrap.plain {
   background: #ffffff;
 }
@@ -355,6 +382,22 @@ body {
   flex-wrap: wrap;
 }
 
+.toolbar-status {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toolbar-status-pill {
+  border-radius: 999px;
+  border: 1px solid #b7c4d8;
+  background: rgba(255, 255, 255, 0.8);
+  color: #334155;
+  font-size: 12px;
+  padding: 4px 9px;
+}
+
 .toolbar-group {
   display: flex;
   align-items: center;
@@ -385,6 +428,18 @@ button.toolbar-btn,
   background: #fff;
   color: var(--text);
   cursor: pointer;
+}
+
+button.toolbar-btn:focus-visible,
+.toolbar select:focus-visible,
+.ft-icon-btn:focus-visible,
+.ft-zoom-btn:focus-visible,
+.ft-text-btn:focus-visible,
+.ft-num-btn:focus-visible,
+.home-btn:focus-visible,
+.zoom-mini-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
 button.toolbar-btn:hover {
@@ -565,6 +620,38 @@ button.toolbar-btn.primary:hover {
   pointer-events: none;
   max-width: min(520px, 90vw);
   line-height: 1.45;
+}
+
+.hint-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d1d9e6;
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+.hint-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.hint-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hint-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid #d5dce8;
+  background: #f8fafc;
+  color: #475569;
+  padding: 3px 8px;
+  font-size: 11px;
 }
 
 .canvas-controls {
@@ -1046,6 +1133,9 @@ button.toolbar-btn.primary:hover {
 .toolbar-stack {
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .toolbar-home-row {
@@ -1058,6 +1148,14 @@ button.toolbar-btn.primary:hover {
 
 .toolbar-home-row .toolbar-btn {
   text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .toolbar-status {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 4px;
+  }
 }
 
 .trial-banner {

@@ -5,6 +5,7 @@ import type { MindEdge, MindMapState, MindNode } from "../types";
 import { distPointToSegment, nodeCenter, normalizeRect } from "../geometry";
 import { VIEWPORT_SCALE_MAX, VIEWPORT_SCALE_MIN } from "../viewportConstants";
 import { NodeBox } from "./NodeBox";
+import { useI18n } from "../i18n";
 
 type Props = {
   state: MindMapState;
@@ -36,6 +37,7 @@ function edgeSegment(
 }
 
 export function MindMapCanvas({ state, dispatch }: Props) {
+  const { t } = useI18n();
   const wrapRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef({ dx: 0, dy: 0 });
   const draftPointerId = useRef<number | null>(null);
@@ -417,9 +419,11 @@ export function MindMapCanvas({ state, dispatch }: Props) {
                 onEndDrag={handleEndNodeDrag}
                 onStartLink={handleStartLink}
                 onUpdateText={(nid, text) => dispatch({ type: "node/updateText", id: nid, text })}
+                onCommitText={(nid) => dispatch({ type: "node/commitText", id: nid })}
                 onSetBounds={(nid, b) =>
-                  dispatch({ type: "node/setBounds", id: nid, x: b.x, y: b.y, width: b.width, height: b.height })
+                  dispatch({ type: "node/setBoundsPreview", id: nid, x: b.x, y: b.y, width: b.width, height: b.height })
                 }
+                onCommitBounds={(nid) => dispatch({ type: "node/setBoundsCommit", id: nid })}
                 onDeleteNode={(nid) => dispatch({ type: "node/delete", id: nid })}
               />
             );
@@ -427,8 +431,22 @@ export function MindMapCanvas({ state, dispatch }: Props) {
         </div>
         {draftStyle && <div className="draft-rect" style={draftStyle} />}
       </div>
-      <div className="hint">
-        顶栏第二行为类似 Google Docs 的格式（粗体、颜色、列表、对齐等）；请先在框内点一下再点格式按钮。悬停框上小条可移动/删除。画布任意空白处左键拖出新框（轻点连线附近可选中连线）；右键或中键拖动画布。Ctrl + 滚轮缩放（范围更大，便于大画布）。
+      {nodeOrder.length === 0 && (
+        <div className="canvas-empty-state" aria-live="polite">
+          <div className="canvas-empty-title">{t("emptyBoardTitle")}</div>
+          <div className="canvas-empty-sub">{t("emptyBoardSub")}</div>
+        </div>
+      )}
+      <div className="hint hint-card">
+        <div className="hint-title">{t("quickStart")}</div>
+        <div className="hint-chips">
+          <span className="hint-chip">{t("guideCreate")}</span>
+          <span className="hint-chip">{t("guidePan")}</span>
+          <span className="hint-chip">{t("guideLink")}</span>
+          <span className="hint-chip">{t("guideZoom")}</span>
+          <span className="hint-chip">{t("guideFormat")}</span>
+          <span className="hint-chip">{t("guideDelete")}</span>
+        </div>
       </div>
       <div className="canvas-controls" onPointerDown={(e) => e.stopPropagation()}>
         <div

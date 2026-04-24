@@ -1,4 +1,5 @@
 import { STORAGE_KEY } from "../mindMapReducer";
+import { getCurrentLang, tr } from "../i18n";
 
 export type CanvasListItem = { id: string; title: string; updatedAt: number };
 
@@ -38,7 +39,7 @@ function migrateLegacyIfNeeded(): void {
   if (!legacy) return;
   const id = `c_${Date.now().toString(36)}`;
   localStorage.setItem(docKey(id), legacy);
-  writeIndex([{ id, title: "迁移的画布", updatedAt: Date.now() }]);
+  writeIndex([{ id, title: tr(getCurrentLang(), "migratedCanvas"), updatedAt: Date.now() }]);
 }
 
 export function listGuestCanvases(): CanvasListItem[] {

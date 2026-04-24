@@ -2,6 +2,7 @@ import type { Dispatch } from "react";
 import type { MindMapAction } from "../mindMapReducer";
 import type { GridMode, MindMapState, MindNode } from "../types";
 import { FormatToolbar } from "./FormatToolbar";
+import { useI18n } from "../i18n";
 
 type Props = {
   state: MindMapState;
@@ -26,44 +27,50 @@ export function Toolbar({
   onImportJson,
   onClearBoard,
 }: Props) {
+  const { t } = useI18n();
   const sel = state.selectedNodeId ? state.nodes[state.selectedNodeId] : undefined;
+  const selectionText = state.selectedNodeId
+    ? t("selectedNode")
+    : state.selectedEdgeId
+      ? t("selectedEdge")
+      : t("ready");
 
   return (
     <>
       <header className="toolbar">
         <div className="toolbar-group">
-          <span className="toolbar-label">插入</span>
+          <span className="toolbar-label">{t("insert")}</span>
           <button type="button" className="toolbar-btn" onClick={onInsertImage} disabled={!sel}>
-            图片到选中框
+            {t("imageToSelected")}
           </button>
         </div>
         <div className="toolbar-group">
-          <span className="toolbar-label">工具</span>
+          <span className="toolbar-label">{t("tools")}</span>
           <button
             type="button"
             className={`toolbar-btn ${state.gridMode === "grid" ? "primary" : ""}`}
             onClick={() => onGridMode("grid")}
           >
-            浅色网格
+            {t("lightGrid")}
           </button>
           <button
             type="button"
             className={`toolbar-btn ${state.gridMode === "plain" ? "primary" : ""}`}
             onClick={() => onGridMode("plain")}
           >
-            纯白画布
+            {t("plainBoard")}
           </button>
           <button type="button" className="toolbar-btn" onClick={onClearBoard}>
-            清空画布
+            {t("clearBoard")}
           </button>
         </div>
         <div className="toolbar-group">
-          <span className="toolbar-label">导出</span>
+          <span className="toolbar-label">{t("export")}</span>
           <button type="button" className="toolbar-btn primary" onClick={onExportJson}>
-            导出 JSON
+            {t("exportJson")}
           </button>
           <label className="toolbar-btn" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            导入 JSON
+            {t("importJson")}
             <input
               type="file"
               accept="application/json,.json"
@@ -75,6 +82,10 @@ export function Toolbar({
               }}
             />
           </label>
+        </div>
+        <div className="toolbar-status" aria-live="polite">
+          <span className="toolbar-status-pill">{selectionText}</span>
+          <span className="toolbar-status-pill">{t("autosaveOn")}</span>
         </div>
       </header>
       <FormatToolbar

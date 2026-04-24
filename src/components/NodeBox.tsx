@@ -3,6 +3,7 @@ import type { ResizeHandle } from "../geometry";
 import { resizeNodeBounds } from "../geometry";
 import { sanitizeNodeHtml } from "../formatExec";
 import type { MindNode } from "../types";
+import { useI18n } from "../i18n";
 
 const RESIZE_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
 
@@ -18,7 +19,9 @@ type Props = {
   onEndDrag: (id: string, moved: boolean) => void;
   onStartLink: (fromId: string, clientX: number, clientY: number) => void;
   onUpdateText: (id: string, text: string) => void;
+  onCommitText: (id: string) => void;
   onSetBounds: (id: string, b: Bounds) => void;
+  onCommitBounds: (id: string) => void;
   onDeleteNode: (id: string) => void;
 };
 
@@ -32,9 +35,12 @@ export function NodeBox({
   onEndDrag,
   onStartLink,
   onUpdateText,
+  onCommitText,
   onSetBounds,
+  onCommitBounds,
   onDeleteNode,
 }: Props) {
+  const { t } = useI18n();
   const cardRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const [hoverPinned, setHoverPinned] = useState(false);
@@ -66,6 +72,10 @@ export function NodeBox({
     }
     onUpdateText(node.id, html);
   }, [node.id, onUpdateText]);
+
+  const onEditorBlur = useCallback(() => {
+    onCommitText(node.id);
+  }, [node.id, onCommitText]);
 
   const onCardMouseEnter = useCallback(() => {
     setHoverPinned(true);
@@ -190,8 +200,9 @@ export function NodeBox({
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {}
+    onCommitBounds(node.id);
     maybeCollapseChromeIfNotHovered();
-  }, [maybeCollapseChromeIfNotHovered]);
+  }, [maybeCollapseChromeIfNotHovered, node.id, onCommitBounds]);
 
   const onDeleteClick = useCallback(
     (e: React.MouseEvent) => {
@@ -229,26 +240,26 @@ export function NodeBox({
           <button
             type="button"
             className="node-chrome-btn node-chrome-drag"
-            title="拖住移动整个框"
-            aria-label="拖动"
+            title={t("dragNode")}
+            aria-label={t("move")}
             onPointerDown={onDragHandlePointerDown}
           >
             <span className="node-chrome-grip" aria-hidden />
-            移动
+            {t("move")}
           </button>
           <button
             type="button"
             className="node-chrome-btn"
-            title="选中此框"
+            title={t("selectNode")}
             onPointerDown={(e) => {
               e.stopPropagation();
               onSelect(node.id);
             }}
           >
-            选中
+            {t("select")}
           </button>
-          <button type="button" className="node-chrome-btn node-chrome-danger" title="删除" onClick={onDeleteClick}>
-            删除
+          <button type="button" className="node-chrome-btn node-chrome-danger" title={t("deleteNode")} onClick={onDeleteClick}>
+            {t("remove")}
           </button>
         </div>
         <div className="node-chrome-bridge" />
@@ -262,10 +273,11 @@ export function NodeBox({
           role="textbox"
           aria-multiline="true"
           data-node-editor="true"
-          data-placeholder="输入文字…"
+          data-placeholder={t("inputText")}
           suppressContentEditableWarning
           spellCheck
           onInput={onEditorInput}
+          onBlur={onEditorBlur}
           onPointerDown={(e) => {
             if (e.button === 0) e.stopPropagation();
           }}

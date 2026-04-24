@@ -1,0 +1,308 @@
+import { createContext, useContext, useMemo, useState } from "react";
+
+export type Lang = "en" | "zh";
+
+const LANG_KEY = "001program-lang";
+
+type DictValue = string | ((params?: Record<string, string | number>) => string);
+
+const dict: Record<Lang, Record<string, DictValue>> = {
+  en: {
+    appTitle: "001 Mind Map",
+    brand: "Mind Map Studio",
+    loadingAuth: "Checking sign-in status...",
+    loadingCanvas: "Loading canvas...",
+    signedIn: "Signed in",
+    signOut: "Sign out",
+    signInGoogle: "Sign in with Google",
+    trialMode: "Trial mode",
+    newCanvas: "+ New Canvas",
+    refresh: "Refresh",
+    canvases: "Canvases",
+    status: "Status",
+    cloud: "Cloud",
+    local: (p) => `Local ${p?.usage ?? ""}`,
+    myCanvases: "My Canvases",
+    loadingList: "Loading list...",
+    emptyCanvases: "No canvas yet. Click New Canvas to start.",
+    rename: "Rename",
+    delete: "Delete",
+    accountStorage: "Account & Storage",
+    trialDesc:
+      "Not signed in. Canvases are saved only in this browser. Please sign in to enable account isolation and cross-device access.",
+    cloudDesc: "Cloud enabled. Your canvases are auto-saved under your own account.",
+    cloudHint: "Firebase env is missing on this site. Check secrets and deployment if sign-in fails.",
+    quickActions: "Quick Actions",
+    newBlankCanvas: "New Blank Canvas",
+    syncList: "Sync List",
+    signInEnableCloud: "Sign in to enable cloud",
+    workspaceStatus: "Workspace Status",
+    cloudAccountMode: "Cloud account mode",
+    localTrialMode: "Local trial mode",
+    currentCanvases: (p) => `Current canvases ${p?.count ?? 0}`,
+    crossDevice: "Cross-device access",
+    localLimit: (p) => `Local limit ${p?.usage ?? ""}`,
+    renamePrompt: "New name",
+    deleteConfirm: "Delete this canvas? This action cannot be undone.",
+    listFailed: (p) => `Failed to load canvas list: ${p?.msg ?? "unknown error"}`,
+    guestLimit: (p) => `Trial mode allows up to ${p?.limit ?? 5} canvases per browser. Sign in with Google for unlimited cloud canvases.`,
+    createFailed: "Create failed. Please check network or Firebase config.",
+    unnamedCanvas: "Untitled Canvas",
+    home: "Home",
+    insert: "Insert",
+    imageToSelected: "Image to selected node",
+    tools: "Tools",
+    lightGrid: "Light grid",
+    plainBoard: "Plain board",
+    clearBoard: "Clear board",
+    export: "Export",
+    exportJson: "Export JSON",
+    importJson: "Import JSON",
+    richFormatAria: "Rich text formatting",
+    print: "Print",
+    undo: "Undo",
+    redo: "Redo",
+    zoomOut: "Zoom out",
+    zoomIn: "Zoom in",
+    paragraphStyle: "Paragraph style",
+    normalText: "Normal text",
+    heading1: "Heading 1",
+    heading2: "Heading 2",
+    heading3: "Heading 3",
+    font: "Font",
+    fontDown: "Font size -1",
+    fontUp: "Font size +1",
+    bold: "Bold",
+    italic: "Italic",
+    underline: "Underline",
+    strikethrough: "Strikethrough",
+    textColor: "Text color",
+    highlight: "Highlight",
+    link: "Link",
+    clearFormat: "Clear format",
+    alignLeft: "Align left",
+    alignCenter: "Align center",
+    alignRight: "Align right",
+    bullets: "Bulleted list",
+    numbered: "Numbered list",
+    outdent: "Outdent",
+    indent: "Indent",
+    borderColor: "Border color",
+    edgeColor: "Edge color",
+    edgeWidth: "Edge width",
+    boxLabel: "Box",
+    lineLabel: "Line",
+    printEmpty: "No printable nodes currently.",
+    linkPrompt: "Link URL (https://...)",
+    jsonParseFail: "JSON parse failed.",
+    invalidFormat: "Invalid file format.",
+    clearConfirm: "Clear canvas? Unexported content will be lost.",
+    signedInBanner: "Signed in:",
+    autoSaveCloud: "canvas will auto-save to your account.",
+    canvasName: "Canvas Name",
+    trialBannerTitle: "Trial mode:",
+    trialBannerDesc:
+      "Data is only stored in this browser. Switching devices or clearing cache will lose data. Please sign in with Google for cloud save and cross-device access.",
+    canvasNameLocal: "Canvas Name (Local)",
+    firebaseMissing: "Firebase is not configured. Add .env.local from env.example and enable Google sign-in.",
+    googleSignInFail: (p) => `Google sign-in failed: ${p?.msg ?? "unknown error"}`,
+    editorHint:
+      "Use the second top row for Google Docs-like formatting. Click inside a node first, then format buttons. Hover the chrome strip to move/delete. Drag on empty canvas to create nodes. Right or middle drag pans. Ctrl+wheel zooms.",
+    move: "Move",
+    select: "Select",
+    remove: "Delete",
+    dragNode: "Drag to move node",
+    selectNode: "Select node",
+    deleteNode: "Delete node",
+    inputText: "Type text...",
+    migratedCanvas: "Migrated Canvas",
+    language: "Language",
+    english: "EN",
+    chinese: "中文",
+    ready: "Ready",
+    selectedNode: "Node selected",
+    selectedEdge: "Edge selected",
+    autosaveOn: "Autosave on",
+    quickStart: "Quick Start",
+    guideCreate: "Drag empty area to create a node",
+    guidePan: "Right/middle drag to pan canvas",
+    guideLink: "Right-drag from a node to link",
+    guideZoom: "Ctrl + wheel to zoom",
+    guideFormat: "Click text first, then format tools",
+    guideDelete: "Delete / Backspace removes selection",
+    emptyBoardTitle: "Start your first idea",
+    emptyBoardSub: "Drag on blank canvas to create a node. Use right-drag from a node to connect ideas.",
+  },
+  zh: {
+    appTitle: "001 思维导图",
+    brand: "Mind Map Studio",
+    loadingAuth: "正在检查登录状态...",
+    loadingCanvas: "加载画布中...",
+    signedIn: "已登录",
+    signOut: "退出",
+    signInGoogle: "Google 登录",
+    trialMode: "试用模式",
+    newCanvas: "+ 新建画布",
+    refresh: "刷新",
+    canvases: "画布",
+    status: "状态",
+    cloud: "云端",
+    local: (p) => `本地 ${p?.usage ?? ""}`,
+    myCanvases: "我的画布",
+    loadingList: "加载列表...",
+    emptyCanvases: "还没有画布，点击新建画布开始。",
+    rename: "重命名",
+    delete: "删除",
+    accountStorage: "账号与存储",
+    trialDesc: "当前未登录，画布仅保存在本机浏览器。请登录以启用账号隔离和跨设备访问。",
+    cloudDesc: "云端已启用，你的画布会自动保存到当前账号。",
+    cloudHint: "当前站点未读取到 Firebase 环境变量，登录异常时请检查 Secrets 与部署状态。",
+    quickActions: "快捷操作",
+    newBlankCanvas: "新建空白画布",
+    syncList: "同步列表",
+    signInEnableCloud: "登录并开启云端",
+    workspaceStatus: "工作台状态",
+    cloudAccountMode: "云端账号模式",
+    localTrialMode: "本地试用模式",
+    currentCanvases: (p) => `当前画布 ${p?.count ?? 0}`,
+    crossDevice: "可跨设备访问",
+    localLimit: (p) => `本地上限 ${p?.usage ?? ""}`,
+    renamePrompt: "新名称",
+    deleteConfirm: "删除该画布？此操作不可恢复。",
+    listFailed: (p) => `加载画布列表失败：${p?.msg ?? "unknown error"}`,
+    guestLimit: (p) => `试用阶段每个浏览器最多保存 ${p?.limit ?? 5} 个画布。请登录 Google 以使用云端无限画布。`,
+    createFailed: "创建失败，请检查网络或 Firebase 配置。",
+    unnamedCanvas: "未命名画布",
+    home: "主页",
+    insert: "插入",
+    imageToSelected: "图片到选中框",
+    tools: "工具",
+    lightGrid: "浅色网格",
+    plainBoard: "纯白画布",
+    clearBoard: "清空画布",
+    export: "导出",
+    exportJson: "导出 JSON",
+    importJson: "导入 JSON",
+    richFormatAria: "文本格式",
+    print: "打印",
+    undo: "撤销",
+    redo: "重做",
+    zoomOut: "缩小",
+    zoomIn: "放大",
+    paragraphStyle: "段落样式",
+    normalText: "普通文本",
+    heading1: "标题 1",
+    heading2: "标题 2",
+    heading3: "标题 3",
+    font: "字体",
+    fontDown: "字号 -1",
+    fontUp: "字号 +1",
+    bold: "粗体",
+    italic: "斜体",
+    underline: "下划线",
+    strikethrough: "删除线",
+    textColor: "文字颜色",
+    highlight: "高亮",
+    link: "插入链接",
+    clearFormat: "清除格式",
+    alignLeft: "左对齐",
+    alignCenter: "居中",
+    alignRight: "右对齐",
+    bullets: "项目符号",
+    numbered: "编号列表",
+    outdent: "减少缩进",
+    indent: "增加缩进",
+    borderColor: "框线颜色",
+    edgeColor: "连线颜色",
+    edgeWidth: "连线粗细",
+    boxLabel: "框",
+    lineLabel: "线",
+    printEmpty: "当前没有可打印的框",
+    linkPrompt: "链接地址（https://...）",
+    jsonParseFail: "JSON 解析失败",
+    invalidFormat: "文件格式不正确",
+    clearConfirm: "确定清空画布？未导出内容将丢失。",
+    signedInBanner: "已登录：",
+    autoSaveCloud: "画布会自动保存到你的账户。",
+    canvasName: "画布名称",
+    trialBannerTitle: "试用阶段：",
+    trialBannerDesc: "数据仅保存在本浏览器，换设备或清理缓存会丢失；请使用 Google 登录以云端保存并跨设备访问。",
+    canvasNameLocal: "画布名称（本地）",
+    firebaseMissing: "未配置 Firebase：请在项目根目录添加 .env.local（参考 env.example），并启用 Google 登录。",
+    googleSignInFail: (p) => `Google 登录失败：${p?.msg ?? "unknown error"}`,
+    editorHint:
+      "顶栏第二行为类似 Google Docs 的格式。先点框内文字再点格式按钮。悬停小条可移动/删除。空白处拖拽可建框；右键或中键拖动画布；Ctrl+滚轮缩放。",
+    move: "移动",
+    select: "选中",
+    remove: "删除",
+    dragNode: "拖住移动整个框",
+    selectNode: "选中此框",
+    deleteNode: "删除",
+    inputText: "输入文字...",
+    migratedCanvas: "迁移的画布",
+    language: "语言",
+    english: "EN",
+    chinese: "中文",
+    ready: "就绪",
+    selectedNode: "已选中节点",
+    selectedEdge: "已选中连线",
+    autosaveOn: "自动保存已开启",
+    quickStart: "快速上手",
+    guideCreate: "在空白处拖拽创建节点",
+    guidePan: "右键/中键拖动画布",
+    guideLink: "从节点右键拖拽建立连线",
+    guideZoom: "Ctrl + 滚轮缩放",
+    guideFormat: "先点文字再用格式工具",
+    guideDelete: "Delete / Backspace 删除选中项",
+    emptyBoardTitle: "开始你的第一个想法",
+    emptyBoardSub: "在空白画布拖拽创建节点；从节点右键拖拽可连接想法。",
+  },
+};
+
+type I18nCtx = {
+  lang: Lang;
+  setLang: (lang: Lang) => void;
+  t: (key: string, params?: Record<string, string | number>) => string;
+};
+
+const Ctx = createContext<I18nCtx | null>(null);
+
+function getInitialLang(): Lang {
+  if (typeof localStorage === "undefined") return "en";
+  const raw = localStorage.getItem(LANG_KEY);
+  return raw === "zh" ? "zh" : "en";
+}
+
+export function getCurrentLang(): Lang {
+  if (typeof localStorage === "undefined") return "en";
+  const raw = localStorage.getItem(LANG_KEY);
+  return raw === "zh" ? "zh" : "en";
+}
+
+export function tr(lang: Lang, key: string, params?: Record<string, string | number>): string {
+  const val = dict[lang][key] ?? dict.en[key] ?? key;
+  return typeof val === "function" ? val(params) : val;
+}
+
+export function I18nProvider({ children }: { children: React.ReactNode }) {
+  const [lang, setLangState] = useState<Lang>(getInitialLang);
+  const setLang = (next: Lang) => {
+    setLangState(next);
+    if (typeof localStorage !== "undefined") localStorage.setItem(LANG_KEY, next);
+  };
+  const value = useMemo<I18nCtx>(
+    () => ({
+      lang,
+      setLang,
+      t: (key, params) => tr(lang, key, params),
+    }),
+    [lang]
+  );
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+export function useI18n(): I18nCtx {
+  const v = useContext(Ctx);
+  if (!v) throw new Error("useI18n must be used within I18nProvider");
+  return v;
+}

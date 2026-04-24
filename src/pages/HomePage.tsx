@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { useI18n } from "../i18n";
 import {
   GUEST_MAX_CANVASES,
   createGuestCanvas,
@@ -17,6 +18,7 @@ const EMPTY = serializeState(initialState);
 export function HomePage() {
   const navigate = useNavigate();
   const { user, loading, signInWithGoogle, signOutApp, cloudAvailable } = useAuth();
+  const { lang, setLang, t } = useI18n();
   const [items, setItems] = useState<CanvasListItem[]>([]);
   const [listLoading, setListLoading] = useState(true);
 
@@ -32,7 +34,7 @@ export function HomePage() {
     } catch (e) {
       const msg = e instanceof Error ? e.message : "unknown error";
       console.error("list canvases failed", e);
-      window.alert(`加载画布列表失败：${msg}`);
+      window.alert(t("listFailed", { msg }));
       setItems([]);
     } finally {
       setListLoading(false);
@@ -46,42 +48,42 @@ export function HomePage() {
   const onNew = useCallback(async () => {
     try {
       if (user) {
-        const id = await createCloudCanvas(user.uid, "未命名画布", EMPTY);
+        const id = await createCloudCanvas(user.uid, t("unnamedCanvas"), EMPTY);
         navigate(`/c/${id}`);
         return;
       }
-      const id = createGuestCanvas("未命名画布", EMPTY);
+      const id = createGuestCanvas(t("unnamedCanvas"), EMPTY);
       navigate(`/c/${id}`);
     } catch (e) {
       if ((e as Error).message === "guest_limit") {
-        window.alert(`试用阶段每个浏览器最多保存 ${GUEST_MAX_CANVASES} 个画布。请登录 Google 以使用云端无限画布。`);
+        window.alert(t("guestLimit", { limit: GUEST_MAX_CANVASES }));
         return;
       }
-      window.alert("创建失败，请检查网络或 Firebase 配置。");
+      window.alert(t("createFailed"));
     }
-  }, [navigate, user]);
+  }, [navigate, t, user]);
 
   const onRename = useCallback(
     (id: string) => {
-      const t = window.prompt("新名称", items.find((x) => x.id === id)?.title ?? "");
-      if (!t) return;
+      const nextTitle = window.prompt(t("renamePrompt"), items.find((x) => x.id === id)?.title ?? "");
+      if (!nextTitle) return;
       if (user) {
         void (async () => {
           const cur = await getCloudCanvas(user.uid, id);
-          await saveCloudCanvas(user.uid, id, t, cur?.data ?? EMPTY);
+          await saveCloudCanvas(user.uid, id, nextTitle, cur?.data ?? EMPTY);
           void refresh();
         })();
       } else {
-        renameGuestCanvas(id, t);
+        renameGuestCanvas(id, nextTitle);
         void refresh();
       }
     },
-    [items, refresh, user]
+    [items, refresh, t, user]
   );
 
   const onDelete = useCallback(
     (id: string) => {
-      if (!window.confirm("删除该画布？此操作不可恢复。")) return;
+      if (!window.confirm(t("deleteConfirm"))) return;
       if (user) {
         void deleteCloudCanvas(user.uid, id).then(refresh);
       } else {
@@ -89,44 +91,46 @@ export function HomePage() {
         void refresh();
       }
     },
-    [refresh, user]
+    [refresh, t, user]
   );
 
   if (loading) {
     return (
       <div className="page-loading">
-        <p>正在检查登录状态…</p>
+        <p>{t("loadingAuth")}</p>
       </div>
     );
   }
 
   const totalCount = items.length;
   const guestUsage = `${Math.min(totalCount, GUEST_MAX_CANVASES)}/${GUEST_MAX_CANVASES}`;
-  const modeText = user ? "云端账号模式" : "本地试用模式";
+  const modeText = user ? t("cloudAccountMode") : t("localTrialMode");
 
   return (
     <div className="home-page home-shell console-home">
       <div className="console-frame">
         <header className="console-header">
           <div className="console-brand">
-            <p className="console-brand-tag">Mind Map Studio</p>
-            <h1 className="home-title">001 思维导图</h1>
-            <p className="home-sub">统一材质工作台 · 木质承载内容 · 金属承载控制</p>
+            <p className="console-brand-tag">{t("brand")}</p>
+            <h1 className="home-title">{t("appTitle")}</h1>
           </div>
           <div className="console-auth">
+            <button type="button" className="home-btn home-btn-metal" onClick={() => setLang(lang === "en" ? "zh" : "en")}>
+              {t("language")} {lang === "en" ? t("chinese") : t("english")}
+            </button>
             {user ? (
               <>
-                <span className="console-status console-status-ok">{user.email ?? user.displayName ?? "已登录"}</span>
+                <span className="console-status console-status-ok">{user.email ?? user.displayName ?? t("signedIn")}</span>
                 <button type="button" className="home-btn home-btn-metal" onClick={() => void signOutApp()}>
-                  退出
+                  {t("signOut")}
                 </button>
               </>
             ) : (
               <>
                 <button type="button" className="home-btn home-btn-metal home-btn-primary" onClick={() => void signInWithGoogle()}>
-                  Google 登录
+                  {t("signInGoogle")}
                 </button>
-                <span className="console-status console-status-warn">试用模式</span>
+                <span className="console-status console-status-warn">{t("trialMode")}</span>
               </>
             )}
           </div>
@@ -134,19 +138,19 @@ export function HomePage() {
 
         <div className="console-control-strip">
           <button type="button" className="home-btn home-btn-wood" onClick={() => void onNew()}>
-            + 新建画布
+            {t("newCanvas")}
           </button>
           <button type="button" className="home-btn home-btn-metal" onClick={() => void refresh()}>
-            刷新
+            {t("refresh")}
           </button>
           <div className="console-meter" aria-label="overview">
             <div className="console-meter-item">
-              <span>画布</span>
+              <span>{t("canvases")}</span>
               <strong>{totalCount}</strong>
             </div>
             <div className="console-meter-item">
-              <span>状态</span>
-              <strong>{user ? "云端" : `本地 ${guestUsage}`}</strong>
+              <span>{t("status")}</span>
+              <strong>{user ? t("cloud") : t("local", { usage: guestUsage })}</strong>
             </div>
           </div>
           <div className="console-knob" aria-hidden>
@@ -157,12 +161,12 @@ export function HomePage() {
         <section className="console-content-grid">
           <div className="console-panel console-panel-wood">
             <div className="console-panel-head">
-              <h2>我的画布</h2>
+              <h2>{t("myCanvases")}</h2>
             </div>
             {listLoading ? (
-              <p className="home-empty">加载列表…</p>
+              <p className="home-empty">{t("loadingList")}</p>
             ) : items.length === 0 ? (
-              <p className="home-empty">还没有画布，点击「新建画布」开始。</p>
+              <p className="home-empty">{t("emptyCanvases")}</p>
             ) : (
               <ul className="console-card-list">
                 {items.map((it, idx) => (
@@ -175,10 +179,10 @@ export function HomePage() {
                     </Link>
                     <div className="console-card-actions">
                       <button type="button" className="home-btn home-btn-metal" onClick={() => onRename(it.id)}>
-                        重命名
+                        {t("rename")}
                       </button>
                       <button type="button" className="home-btn home-btn-metal" onClick={() => onDelete(it.id)}>
-                        删除
+                        {t("delete")}
                       </button>
                     </div>
                   </li>
@@ -189,21 +193,21 @@ export function HomePage() {
 
           <aside className="console-panel console-panel-metal">
             <div className="console-panel-head">
-              <h3>账号与存储</h3>
+              <h3>{t("accountStorage")}</h3>
             </div>
             {!user ? (
               <div className="console-note console-note-warn">
-                <strong>试用阶段：</strong>
-                当前未登录，画布仅保存在本机浏览器，不会同步到云端，也不会被他人看到。请登录以启用账号隔离与跨设备访问。
+                <strong>{t("trialMode")}:</strong>
+                {t("trialDesc")}
               </div>
             ) : (
               <div className="console-note console-note-ok">
-                <strong>云端已启用：</strong>
-                你的画布会自动保存到当前账号，默认仅你本人可访问。
+                <strong>{t("cloud")}:</strong>
+                {t("cloudDesc")}
               </div>
             )}
             {!cloudAvailable && (
-              <p className="home-hint">当前站点未读取到 Firebase 环境变量，登录异常时请检查 Secrets 与部署状态。</p>
+              <p className="home-hint">{t("cloudHint")}</p>
             )}
           </aside>
         </section>
@@ -211,18 +215,18 @@ export function HomePage() {
         <section className="console-bottom-grid">
           <div className="console-panel console-panel-metal">
             <div className="console-panel-head">
-              <h3>快捷操作</h3>
+              <h3>{t("quickActions")}</h3>
             </div>
             <div className="console-quick-list">
               <button type="button" className="home-btn home-btn-wood" onClick={() => void onNew()}>
-                新建空白画布
+                {t("newBlankCanvas")}
               </button>
               <button type="button" className="home-btn home-btn-metal" onClick={() => void refresh()}>
-                同步列表
+                {t("syncList")}
               </button>
               {!user && (
                 <button type="button" className="home-btn home-btn-metal home-btn-primary" onClick={() => void signInWithGoogle()}>
-                  登录并开启云端
+                  {t("signInEnableCloud")}
                 </button>
               )}
             </div>
@@ -230,12 +234,12 @@ export function HomePage() {
 
           <div className="console-panel console-panel-wood">
             <div className="console-panel-head">
-              <h3>工作台状态</h3>
+              <h3>{t("workspaceStatus")}</h3>
             </div>
             <div className="console-badge-row">
               <span className="console-card-index">{modeText}</span>
-              <span className="console-card-index">当前画布 {totalCount}</span>
-              <span className="console-card-index">{user ? "可跨设备访问" : `本地上限 ${guestUsage}`}</span>
+              <span className="console-card-index">{t("currentCanvases", { count: totalCount })}</span>
+              <span className="console-card-index">{user ? t("crossDevice") : t("localLimit", { usage: guestUsage })}</span>
             </div>
           </div>
         </section>

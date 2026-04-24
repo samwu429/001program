@@ -5,6 +5,7 @@ import { getGuestCanvasData, listGuestCanvases, saveGuestCanvas } from "../docum
 import { getCloudCanvas, saveCloudCanvas } from "../documents/cloudCanvases";
 import { MindMapWorkspace } from "../components/MindMapWorkspace";
 import { initialState, serializeState } from "../mindMapReducer";
+import { useI18n } from "../i18n";
 
 const EMPTY_DOC = serializeState(initialState);
 
@@ -12,9 +13,10 @@ export function EditorPage() {
   const { docId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [payload, setPayload] = useState<string | null>(null);
-  const [title, setTitle] = useState("未命名画布");
+  const [title, setTitle] = useState(t("unnamedCanvas"));
 
   useEffect(() => {
     let cancelled = false;
@@ -41,7 +43,7 @@ export function EditorPage() {
             return;
           }
           const meta = listGuestCanvases().find((x) => x.id === docId);
-          setTitle(meta?.title ?? "未命名画布");
+          setTitle(meta?.title ?? t("unnamedCanvas"));
           setPayload(raw);
         }
       } finally {
@@ -51,7 +53,7 @@ export function EditorPage() {
     return () => {
       cancelled = true;
     };
-  }, [docId, user, navigate]);
+  }, [docId, user, navigate, t]);
 
   const persistTitle = useCallback(() => {
     if (!docId) return;
@@ -79,10 +81,11 @@ export function EditorPage() {
     user ? (
       <div className="trial-banner trial-banner--ok">
         <span>
-          已登录：<strong>{user.email ?? user.displayName ?? user.uid}</strong>，画布会自动保存到你的账户。
+          {t("signedInBanner")}
+          <strong>{user.email ?? user.displayName ?? user.uid}</strong>, {t("autoSaveCloud")}
         </span>
         <label className="doc-title-edit">
-          画布名称
+          {t("canvasName")}
           <input
             type="text"
             value={title}
@@ -93,10 +96,10 @@ export function EditorPage() {
       </div>
     ) : (
       <div className="trial-banner trial-banner--warn">
-        <strong>试用阶段：</strong>
-        数据仅保存在本浏览器，换设备或清理缓存会丢失；他人无法看到你的画布。请使用 Google 登录以云端保存并跨设备访问。
+        <strong>{t("trialBannerTitle")}</strong>
+        {t("trialBannerDesc")}
         <label className="doc-title-edit">
-          画布名称（本地）
+          {t("canvasNameLocal")}
           <input
             type="text"
             value={title}
@@ -110,7 +113,7 @@ export function EditorPage() {
   if (loading || payload === null) {
     return (
       <div className="page-loading">
-        <p>加载画布…</p>
+        <p>{t("loadingCanvas")}</p>
       </div>
     );
   }

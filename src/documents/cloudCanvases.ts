@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import type { CanvasListItem } from "./guestCanvases";
 import { getDb } from "../firebase/client";
+import { getCurrentLang, tr } from "../i18n";
 
 function col(uid: string) {
   const db = getDb();
@@ -28,7 +29,7 @@ export async function listCloudCanvases(uid: string): Promise<CanvasListItem[]> 
     const v = d.data() as { title?: string; updatedAt?: number };
     out.push({
       id: d.id,
-      title: typeof v.title === "string" ? v.title : "未命名画布",
+      title: typeof v.title === "string" ? v.title : tr(getCurrentLang(), "unnamedCanvas"),
       updatedAt: typeof v.updatedAt === "number" ? v.updatedAt : 0,
     });
   });
@@ -43,7 +44,7 @@ export async function getCloudCanvas(uid: string, id: string): Promise<{ title: 
   if (!s.exists()) return null;
   const v = s.data() as { title?: string; data?: string };
   return {
-    title: typeof v.title === "string" ? v.title : "未命名画布",
+    title: typeof v.title === "string" ? v.title : tr(getCurrentLang(), "unnamedCanvas"),
     data: typeof v.data === "string" ? v.data : "{}",
   };
 }
