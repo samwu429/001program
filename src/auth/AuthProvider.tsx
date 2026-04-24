@@ -38,7 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithPopup(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "unknown error";
+      window.alert(`Google 登录失败：${msg}`);
+    }
   }, []);
 
   const signOutApp = useCallback(async () => {

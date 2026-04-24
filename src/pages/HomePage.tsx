@@ -29,6 +29,11 @@ export function HomePage() {
       } else {
         setItems(listGuestCanvases());
       }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "unknown error";
+      console.error("list canvases failed", e);
+      window.alert(`加载画布列表失败：${msg}`);
+      setItems([]);
     } finally {
       setListLoading(false);
     }
