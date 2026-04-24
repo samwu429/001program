@@ -2346,11 +2346,12 @@ body {
 }
 
 .console-home .console-brand .home-title {
-  margin: 10px 0 0;
-  font-size: clamp(1.75rem, 2.9vw, 2.15rem);
+  margin: 8px 0 0;
+  font-size: clamp(1.22rem, 1.85vw, 1.48rem);
   font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
+  line-height: 1.22;
+  letter-spacing: -0.018em;
+  font-variant-numeric: tabular-nums;
   color: var(--ms-text);
   text-shadow: none;
 }
