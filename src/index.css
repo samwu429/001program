@@ -16,24 +16,35 @@
   box-sizing: border-box;
 }
 
-html,
+html {
+  height: 100%;
+}
+
 body,
 #root {
-  height: 100%;
   margin: 0;
 }
 
 body {
+  min-height: 100%;
   background: var(--bg);
   color: var(--text);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  min-height: 100%;
 }
 
 .app-shell {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
 }
 
 .canvas-wrap {
@@ -830,7 +841,8 @@ button.toolbar-btn.primary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   color: var(--muted);
 }
 
@@ -1871,7 +1883,7 @@ a.toolbar-btn.toolbar-btn-home {
   width: 100%;
   min-height: calc(100vh - 36px);
   display: grid;
-  grid-template-rows: auto auto auto 1fr auto;
+  grid-template-rows: auto auto auto auto auto;
   gap: 14px;
 }
 
@@ -1887,9 +1899,9 @@ a.toolbar-btn.toolbar-btn-home {
 }
 
 .console-card-list {
-  flex: 1;
+  flex: 0 1 auto;
   max-height: none;
-  overflow: auto;
+  overflow: visible;
   padding-right: 4px;
 }
 
@@ -1950,7 +1962,7 @@ a.toolbar-btn.toolbar-btn-home {
 
   .console-frame {
     min-height: auto;
-    grid-template-rows: auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto;
   }
 
   .console-bottom-grid {
@@ -2243,6 +2255,8 @@ header.toolbar button.toolbar-btn.toolbar-btn--danger {
 body {
   background: var(--ms-bg);
   color: var(--ms-text);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .home-page.home-shell.console-home {
@@ -2667,6 +2681,8 @@ body {
 }
 
 .page-loading {
+  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--ms-bg);
   color: var(--ms-text-secondary);
 }
