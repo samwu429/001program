@@ -157,6 +157,11 @@ export function HomePage() {
         </div>
 
         <section className="console-hero" aria-labelledby="home-hero-title">
+          <span className="visually-hidden">{t("homeHeroImgAlt")}</span>
+          <div className="console-hero-media" aria-hidden="true">
+            <img src={heroArt} alt="" width={2560} height={1097} decoding="async" />
+            <div className="console-hero-scrim" />
+          </div>
           <div className="console-hero-copy">
             <p className="console-hero-eyebrow">{t("homeHeroEyebrow")}</p>
             <h2 id="home-hero-title" className="console-hero-title">
@@ -171,11 +176,6 @@ export function HomePage() {
             <button type="button" className="home-btn home-btn-wood console-hero-cta" onClick={() => void onNew()}>
               {t("newCanvas")}
             </button>
-          </div>
-          <div className="console-hero-art">
-            <div className="console-hero-art-inner">
-              <img src={heroArt} alt={t("homeHeroImgAlt")} width={1200} height={675} decoding="async" />
-            </div>
           </div>
         </section>
 
