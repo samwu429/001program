@@ -8,12 +8,12 @@ function readEnv(name: string): string | undefined {
 }
 
 const firebaseConfig = {
-  apiKey: readEnv("VITE_FIREBASE_API_KEY"),
-  authDomain: readEnv("VITE_FIREBASE_AUTH_DOMAIN"),
-  projectId: readEnv("VITE_FIREBASE_PROJECT_ID"),
-  storageBucket: readEnv("VITE_FIREBASE_STORAGE_BUCKET"),
-  messagingSenderId: readEnv("VITE_FIREBASE_MESSAGING_SENDER_ID"),
-  appId: readEnv("VITE_FIREBASE_APP_ID"),
+  apiKey: readEnv("VITE_FIREBASE_API_KEY") ?? "AIzaSyCoXZyh9sdsXUNxtu_Gu3DXInOCPVz684Y",
+  authDomain: readEnv("VITE_FIREBASE_AUTH_DOMAIN") ?? "mind-map-6eb98.firebaseapp.com",
+  projectId: readEnv("VITE_FIREBASE_PROJECT_ID") ?? "mind-map-6eb98",
+  storageBucket: readEnv("VITE_FIREBASE_STORAGE_BUCKET") ?? "mind-map-6eb98.firebasestorage.app",
+  messagingSenderId: readEnv("VITE_FIREBASE_MESSAGING_SENDER_ID") ?? "767805370040",
+  appId: readEnv("VITE_FIREBASE_APP_ID") ?? "1:767805370040:web:79dcaf4ef00e53a16e4e4d",
 };
 
 export const firebaseConfigured = Boolean(
