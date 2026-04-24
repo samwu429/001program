@@ -1855,3 +1855,54 @@ button.toolbar-btn.primary:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Squarer UI pass */
+:root {
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+.console-frame,
+.console-frame::before,
+.console-control-strip,
+.console-panel,
+.console-panel::before,
+.console-card,
+.hint-card,
+.canvas-empty-state,
+.zoom-rail-wrap {
+  border-radius: var(--radius-lg);
+}
+
+.home-btn,
+.toolbar-btn,
+button.toolbar-btn,
+.toolbar select,
+.ft-select,
+.ft-icon-btn,
+.ft-zoom-btn,
+.ft-text-btn,
+.ft-num-btn,
+.node-card,
+.node-chrome,
+.node-chrome-btn,
+.node-handle,
+.trial-banner,
+.doc-title-edit input,
+.console-note,
+.console-meter-item {
+  border-radius: var(--radius-sm);
+}
+
+.console-brand-tag,
+.toolbar-status-pill,
+.hint-chip,
+.console-card-index {
+  border-radius: var(--radius-xs);
+}
+
+.console-status {
+  border-radius: var(--radius-sm);
+}
