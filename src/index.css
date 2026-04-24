@@ -645,29 +645,25 @@ button.toolbar-btn.primary:hover {
   color: var(--muted);
 }
 
-.home-page {
-  max-width: 880px;
+.home-shell {
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 20px 18px 42px;
 }
 
-.home-trial {
-  position: static;
-  margin-bottom: 16px;
-}
-
-.home-header {
+.home-topbar {
   display: flex;
-  align-items: flex-end;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .home-title {
   margin: 0;
-  font-size: 1.75rem;
+  letter-spacing: 0.2px;
+  font-size: 1.82rem;
 }
 
 .home-sub {
@@ -683,31 +679,124 @@ button.toolbar-btn.primary:hover {
   flex-wrap: wrap;
 }
 
-.home-user {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.home-hint {
+.home-pill {
+  display: inline-flex;
+  align-items: center;
   font-size: 12px;
-  color: var(--muted);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
 }
 
-.home-actions {
+.home-pill-ok {
+  background: #ecfdf5;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.home-pill-warn {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #9a3412;
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.home-hero-main,
+.home-hero-stats {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.home-hero-main h2 {
+  margin: 6px 0 8px;
+  font-size: 1.25rem;
+}
+
+.home-hero-main p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.home-hero-label {
+  display: inline-block;
+  margin: 0;
+  font-size: 12px;
+  color: #334155;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+.home-hero-actions {
+  margin-top: 14px;
+}
+
+.home-cta {
+  padding: 8px 14px;
+  font-weight: 600;
+}
+
+.home-hero-stats {
+  display: grid;
+  gap: 9px;
+  align-content: start;
+}
+
+.home-stat-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.home-stat-card span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.home-stat-card strong {
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.home-layout {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 14px;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.panel-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.home-limit-hint {
-  font-size: 13px;
-  color: var(--muted);
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .home-list h2 {
-  margin: 0 0 12px;
-  font-size: 1.1rem;
+  margin: 0;
+  font-size: 1.08rem;
 }
 
 .home-empty {
@@ -718,20 +807,26 @@ button.toolbar-btn.primary:hover {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  gap: 9px;
 }
 
 .home-card {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  gap: 12px;
-  border: 1px solid var(--border);
+  gap: 10px;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  background: var(--panel);
-  padding: 10px 12px;
+  background: #fff;
+  padding: 10px 11px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
 }
 
 .home-card-link {
@@ -748,14 +843,42 @@ button.toolbar-btn.primary:hover {
 .home-card-meta {
   font-size: 12px;
   color: var(--muted);
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .home-card-actions {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 6px;
+  align-content: start;
   flex-shrink: 0;
+}
+
+.home-side h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.home-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.home-checklist {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #475569;
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+.home-checklist li + li {
+  margin-top: 4px;
+}
+
+.home-trial {
+  position: static;
+  margin: 0;
 }
 
 .toolbar-stack {
@@ -810,4 +933,11 @@ button.toolbar-btn.primary:hover {
   border-radius: 6px;
   border: 1px solid var(--border);
   font: inherit;
+}
+
+@media (max-width: 980px) {
+  .home-hero,
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
 }

@@ -100,24 +100,20 @@ export function HomePage() {
     );
   }
 
-  return (
-    <div className="home-page">
-      {!user && (
-        <div className="trial-banner trial-banner--warn home-trial">
-          <strong>试用阶段：</strong>
-          当前未登录，画布仅保存在本机浏览器，不会同步到云端，也不会被他人看到。请使用 Google 登录以启用个人云端画布（仅本人可见）。
-        </div>
-      )}
+  const totalCount = items.length;
+  const guestUsage = `${Math.min(totalCount, GUEST_MAX_CANVASES)}/${GUEST_MAX_CANVASES}`;
 
-      <header className="home-header">
+  return (
+    <div className="home-page home-shell">
+      <header className="home-topbar">
         <div>
           <h1 className="home-title">001 思维导图</h1>
-          <p className="home-sub">创建、打开并自动保存你的画布</p>
+          <p className="home-sub">纯净画布，快速记录，自动保存</p>
         </div>
         <div className="home-auth">
           {user ? (
             <>
-              <span className="home-user">{user.email ?? user.displayName}</span>
+              <span className="home-pill home-pill-ok">{user.email ?? user.displayName ?? "已登录"}</span>
               <button type="button" className="toolbar-btn" onClick={() => void signOutApp()}>
                 退出
               </button>
@@ -127,51 +123,101 @@ export function HomePage() {
               <button type="button" className="toolbar-btn primary" onClick={() => void signInWithGoogle()}>
                 Google 登录
               </button>
-              {!cloudAvailable && (
-                <span className="home-hint">（未配置 Firebase 时仅本地试用）</span>
-              )}
+              <span className="home-pill home-pill-warn">试用模式</span>
             </>
           )}
         </div>
       </header>
 
-      <section className="home-actions">
-        <button type="button" className="toolbar-btn primary" onClick={() => void onNew()}>
-          新建画布
-        </button>
-        {!user && (
-          <span className="home-limit-hint">
-            试用最多 {GUEST_MAX_CANVASES} 个本地画布 · 已用 {items.length}/{GUEST_MAX_CANVASES}
-          </span>
-        )}
+      <section className="home-hero">
+        <div className="home-hero-main">
+          <p className="home-hero-label">工作台</p>
+          <h2>开始你的下一张画布</h2>
+          <p>
+            支持多画布管理、自动保存、连线与节点样式配置。交互已优化，空白区域可直接创建内容。
+          </p>
+          <div className="home-hero-actions">
+            <button type="button" className="toolbar-btn primary home-cta" onClick={() => void onNew()}>
+              + 新建画布
+            </button>
+          </div>
+        </div>
+        <div className="home-hero-stats">
+          <div className="home-stat-card">
+            <span>画布数量</span>
+            <strong>{totalCount}</strong>
+          </div>
+          <div className="home-stat-card">
+            <span>账户状态</span>
+            <strong>{user ? "云端已启用" : "本地试用中"}</strong>
+          </div>
+          {!user && (
+            <div className="home-stat-card">
+              <span>试用容量</span>
+              <strong>{guestUsage}</strong>
+            </div>
+          )}
+        </div>
       </section>
 
-      <section className="home-list">
-        <h2>我的画布</h2>
-        {listLoading ? (
-          <p>加载列表…</p>
-        ) : items.length === 0 ? (
-          <p className="home-empty">还没有画布，点击「新建画布」开始。</p>
-        ) : (
-          <ul className="home-cards">
-            {items.map((it) => (
-              <li key={it.id} className="home-card">
-                <Link to={`/c/${it.id}`} className="home-card-link">
-                  <div className="home-card-title">{it.title}</div>
-                  <div className="home-card-meta">{new Date(it.updatedAt).toLocaleString()}</div>
-                </Link>
-                <div className="home-card-actions">
-                  <button type="button" className="toolbar-btn" onClick={() => onRename(it.id)}>
-                    重命名
-                  </button>
-                  <button type="button" className="toolbar-btn" onClick={() => onDelete(it.id)}>
-                    删除
-                  </button>
-                </div>
-              </li>
-            ))}
+      <section className="home-layout">
+        <div className="home-list panel">
+          <div className="panel-head">
+            <h2>我的画布</h2>
+            <button type="button" className="toolbar-btn" onClick={() => void refresh()}>
+              刷新
+            </button>
+          </div>
+          {listLoading ? (
+            <p className="home-empty">加载列表…</p>
+          ) : items.length === 0 ? (
+            <p className="home-empty">还没有画布，点击「新建画布」开始。</p>
+          ) : (
+            <ul className="home-cards">
+              {items.map((it) => (
+                <li key={it.id} className="home-card">
+                  <Link to={`/c/${it.id}`} className="home-card-link">
+                    <div className="home-card-title">{it.title}</div>
+                    <div className="home-card-meta">{new Date(it.updatedAt).toLocaleString()}</div>
+                  </Link>
+                  <div className="home-card-actions">
+                    <button type="button" className="toolbar-btn" onClick={() => onRename(it.id)}>
+                      重命名
+                    </button>
+                    <button type="button" className="toolbar-btn" onClick={() => onDelete(it.id)}>
+                      删除
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <aside className="panel home-side">
+          <h3>状态与提示</h3>
+          {!user ? (
+            <div className="trial-banner trial-banner--warn home-trial">
+              <strong>试用阶段：</strong>
+              当前未登录，画布仅保存在本机浏览器，不会同步到云端，也不会被他人看到。请登录以启用账号隔离与跨设备访问。
+            </div>
+          ) : (
+            <div className="trial-banner trial-banner--ok home-trial">
+              <strong>云端已启用：</strong>
+              你的画布会自动保存到当前账号，默认仅你本人可访问。
+            </div>
+          )}
+          {!cloudAvailable && (
+            <p className="home-hint">
+              当前站点还未读取到 Firebase 环境变量，若登录异常请检查仓库 Secrets 与部署状态。
+            </p>
+          )}
+          <ul className="home-checklist">
+            <li>纯色 UI 主题，弱阴影分层</li>
+            <li>卡片悬停与按钮反馈动画</li>
+            <li>多画布入口与状态可视化</li>
           </ul>
-        )}
+        </aside>
       </section>
     </div>
   );
