@@ -8,7 +8,7 @@ function readEnv(name: string): string | undefined {
 }
 
 const firebaseConfig = {
-  apiKey: readEnv("VITE_FIREBASE_API_KEY") ?? "AIzaSyCoXZyh9sdsXUNxtu_Gu3DXInOCPVz684Y",
+  apiKey: readEnv("VITE_FIREBASE_API_KEY") ?? "AIzaSyCoXZyh9sdsXUnxtu_Gu3DXInOCPVz684Y",
   authDomain: readEnv("VITE_FIREBASE_AUTH_DOMAIN") ?? "mind-map-6eb98.firebaseapp.com",
   projectId: readEnv("VITE_FIREBASE_PROJECT_ID") ?? "mind-map-6eb98",
   storageBucket: readEnv("VITE_FIREBASE_STORAGE_BUCKET") ?? "mind-map-6eb98.firebasestorage.app",
