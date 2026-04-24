@@ -10,13 +10,10 @@
     <script>
       (function () {
         try {
-          var host = location.hostname || "";
-          if (!host.endsWith("github.io")) return;
-          var path = location.pathname || "/";
-          if (path.indexOf("/docs/") !== -1 || /\/docs$/i.test(path)) return;
-          var base = path.replace(/\/+$/, "");
-          var target = location.origin + (base.length ? base : "") + "/docs/index.html";
-          if (location.href.split("#")[0] !== target) location.replace(target);
+          var p = location.pathname || "";
+          if (/\/docs(\/|$)/i.test(p)) return;
+          var target = new URL("./docs/index.html", location.href);
+          if (location.href.split("#")[0] !== target.href) location.replace(target.href);
         } catch (_) {}
       })();
     </script>
