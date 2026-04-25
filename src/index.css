@@ -2300,84 +2300,90 @@ body {
 .console-home .console-home-top {
   display: flex;
   flex-wrap: wrap;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-between;
-  gap: 18px 24px;
+  gap: 12px 20px;
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  padding: 9px 18px 10px;
+  border: 1px solid var(--home-brand-plate-border);
+  border-left: 3px solid var(--ms-purple-line);
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, transparent 42%),
+    linear-gradient(90deg, var(--home-brand-plate-1) 0%, var(--home-brand-plate-2) 38%, rgba(250, 249, 252, 0.96) 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 1px 2px rgba(91, 44, 145, 0.04);
 }
 
 .console-home .console-home-brand-plate {
   flex: 1 1 auto;
-  min-width: min(100%, 260px);
-  max-width: min(100%, 560px);
-  padding: 18px 22px 20px;
-  border: 1px solid var(--home-brand-plate-border);
-  border-left: 3px solid var(--ms-purple-line);
-  border-radius: var(--radius-md);
-  background:
-    linear-gradient(168deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.18) 38%, transparent 62%),
-    radial-gradient(120% 90% at 0% 0%, rgba(255, 255, 255, 0.55), transparent 52%),
-    linear-gradient(145deg, var(--home-brand-plate-1) 0%, var(--home-brand-plate-2) 48%, var(--home-brand-plate-3) 100%);
-  box-shadow: var(--ms-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  min-width: 0;
+  max-width: none;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
 .console-home .console-home-top-auth {
-  flex: 1 1 220px;
+  flex: 0 1 auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   min-width: 0;
-  align-self: center;
 }
 
-.console-home .console-brand {
+.console-home .console-home-top .console-brand {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
   min-width: 0;
 }
 
 .console-home .console-home-brand-plate .console-brand-kicker {
   margin: 0;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--home-brand-plate-muted);
+  opacity: 0.92;
 }
 
 .console-home .console-home-brand-plate .console-brand-overline {
   display: block;
-  width: 36px;
-  height: 2px;
-  margin: 2px 0 4px;
-  background: linear-gradient(90deg, var(--ms-purple-line), rgba(124, 58, 237, 0.22));
-  border-radius: 1px;
+  width: 1px;
+  height: 14px;
+  margin: 0 1px;
+  flex-shrink: 0;
+  align-self: center;
+  background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.28), transparent);
+  border-radius: 0;
 }
 
 .console-home .console-home-brand-plate .console-brand-tag {
   margin: 0;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(124, 58, 237, 0.2);
-  background: rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  background: rgba(255, 255, 255, 0.42);
   color: var(--home-brand-plate-muted);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-size: 11px;
-  padding: 5px 11px;
-  border-left: 2px solid var(--ms-purple-line);
-  backdrop-filter: blur(6px);
+  letter-spacing: 0.08em;
+  font-size: 9px;
+  padding: 3px 10px;
+  backdrop-filter: blur(4px);
 }
 
 .console-home .console-home-brand-plate .home-title {
-  margin: 8px 0 0;
-  font-size: clamp(1.22rem, 1.85vw, 1.48rem);
+  margin: 0;
+  font-size: clamp(0.92rem, 1.15vw, 1.02rem);
   font-weight: 600;
-  line-height: 1.22;
-  letter-spacing: -0.018em;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--home-brand-plate-ink);
   text-shadow: none;
@@ -2410,15 +2416,14 @@ body {
   .console-home .console-home-top {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .console-home .console-home-brand-plate {
-    max-width: none;
+    padding: 10px 14px 12px;
+    gap: 10px;
   }
 
   .console-home .console-home-top-auth {
-    flex-basis: auto;
     justify-content: flex-start;
+    padding-top: 2px;
+    border-top: 1px solid rgba(124, 58, 237, 0.08);
   }
 
   .console-home .console-home-top-auth .console-auth {
