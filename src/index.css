@@ -2391,6 +2391,19 @@ body {
   opacity: 0.92;
 }
 
+.console-home .console-home-brand-plate .console-brand-kicker-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+.console-home .console-home-brand-plate .console-brand-kicker-btn:hover {
+  color: #ececec;
+}
+
 .console-home .console-home-brand-plate .console-brand-overline {
   display: block;
   width: 1px;

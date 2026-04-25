@@ -113,7 +113,9 @@ export function HomePage() {
       <header className="console-home-top">
         <div className="console-home-brand-plate">
           <div className="console-brand">
-            <p className="console-brand-kicker">{t("homeBrandKicker")}</p>
+            <button type="button" className="console-brand-kicker console-brand-kicker-btn" onClick={() => {}}>
+              {t("homeBrandKicker")}
+            </button>
             <span className="console-brand-overline" aria-hidden />
             <p className="console-brand-tag">{t("brand")}</p>
             <h1 className="home-title">{t("appTitle")}</h1>
