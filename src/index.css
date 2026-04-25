@@ -2347,10 +2347,10 @@ body {
   width: 100%;
   margin-bottom: 16px;
   padding: 9px 18px 10px;
-  border: 1px solid #3e3650;
+  border: 1px solid #2b2b2b;
   border-radius: var(--radius-sm);
-  background: #4f4561;
-  box-shadow: 0 2px 6px rgba(33, 28, 43, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  background: #121212;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .console-home .console-home-brand-plate {
@@ -2387,7 +2387,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #dad2ea;
+  color: #d4d4d4;
   opacity: 0.92;
 }
 
@@ -2398,16 +2398,16 @@ body {
   margin: 0 1px;
   flex-shrink: 0;
   align-self: center;
-  background: linear-gradient(180deg, transparent, rgba(217, 205, 241, 0.64), transparent);
+  background: linear-gradient(180deg, transparent, rgba(226, 226, 226, 0.66), transparent);
   border-radius: 0;
 }
 
 .console-home .console-home-brand-plate .console-brand-tag {
   margin: 0;
   border-radius: 999px;
-  border: 1px solid #7b6898;
-  background: #5f5276;
-  color: #efe9fb;
+  border: 1px solid #4a4a4a;
+  background: #1f1f1f;
+  color: #eaeaea;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2423,23 +2423,23 @@ body {
   line-height: 1.2;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
-  color: #f6f2ff;
+  color: #ffffff;
   text-shadow: none;
 }
 
 .console-home .console-status {
   border-radius: 0;
-  border: 1px solid var(--ms-border);
-  background: var(--ms-bg);
-  color: var(--ms-text);
+  border: 1px solid #3a3a3a;
+  background: #1a1a1a;
+  color: #f2f2f2;
 }
 
 .console-home .console-status-ok {
-  color: #107c10;
+  color: #7ce38b;
 }
 
 .console-home .console-status-warn {
-  color: #8a6534;
+  color: #ffd48c;
 }
 
 .console-home .console-home-top-auth .console-auth {
@@ -2448,6 +2448,31 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.console-home .console-home-top-auth .home-btn-metal {
+  border: 1px solid #4a4a4a;
+  background: #1a1a1a;
+  color: #f2f2f2;
+  box-shadow: none;
+}
+
+.console-home .console-home-top-auth .home-btn-metal:hover {
+  background: #242424;
+  border-color: #606060;
+  color: #ffffff;
+}
+
+.console-home .console-home-top-auth .home-btn-metal:active {
+  background: #2a2a2a;
+  border-color: #6a6a6a;
+  color: #ffffff;
+}
+
+.console-home .console-home-top-auth .home-btn-primary.home-btn-metal {
+  border-color: #7a7a7a;
+  background: #262626;
+  color: #ffffff;
 }
 
 @media (max-width: 720px) {
