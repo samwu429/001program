@@ -579,8 +579,8 @@ button.toolbar-btn.primary:hover {
 }
 
 .ft-section--edge {
-  border-left: 1px solid #e8dcef;
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.06), transparent 72%);
+  border-left: 1px solid #e4e2ea;
+  background: linear-gradient(90deg, rgba(106, 97, 120, 0.05), transparent 72%);
 }
 
 .ft-group--edge {
@@ -2244,7 +2244,7 @@ header.toolbar button.toolbar-btn.toolbar-btn--danger {
 
 .format-toolbar .ft-line-width {
   height: 28px;
-  accent-color: #7c3aed;
+  accent-color: #6f6580;
 }
 
 /* —— Microsoft Fluent–inspired shell + purple signature accents —— */
@@ -2254,18 +2254,19 @@ header.toolbar button.toolbar-btn.toolbar-btn--danger {
   --ms-border: #edebe9;
   --ms-text: #323130;
   --ms-text-secondary: #605e5c;
-  --ms-purple: #5b2c91;
-  --ms-purple-soft: #e8dcef;
-  --ms-purple-line: #7c3aed;
+  /* Muted violet-gray: editorial, not “neon AI accent rail” */
+  --ms-purple: #4a3f58;
+  --ms-purple-soft: #e8e6ee;
+  --ms-purple-line: #6f6580;
   --ms-shadow: 0 1.6px 3.6px rgba(0, 0, 0, 0.08), 0 0.3px 0.9px rgba(0, 0, 0, 0.06);
-  --home-accent-line: #5c4d8a;
-  --home-accent-line-soft: rgba(92, 77, 138, 0.35);
+  --home-accent-line: #6a6178;
+  --home-accent-line-soft: rgba(106, 97, 120, 0.32);
   --home-surface-muted: #faf9f8;
-  /* Title plate: cool lavender, pairs with --ms-purple-line */
-  --home-brand-plate-1: #faf8ff;
-  --home-brand-plate-2: #f1e9fb;
-  --home-brand-plate-3: #e8def6;
-  --home-brand-plate-border: rgba(124, 58, 237, 0.14);
+  /* Title strip: cool neutral-lavender */
+  --home-brand-plate-1: #f9f8fb;
+  --home-brand-plate-2: #f1eff5;
+  --home-brand-plate-3: #eae8ef;
+  --home-brand-plate-border: rgba(106, 97, 120, 0.14);
   --home-brand-plate-ink: #2a2438;
   --home-brand-plate-muted: #5c4f72;
 }
@@ -2278,18 +2279,17 @@ body {
 }
 
 .home-page.home-shell.console-home {
-  background: radial-gradient(1200px 600px at 85% -10%, rgba(124, 58, 237, 0.06), transparent 55%), var(--ms-bg);
+  background: radial-gradient(1200px 600px at 88% 0%, rgba(106, 97, 120, 0.045), transparent 52%), var(--ms-bg);
 }
 
 .console-home .console-frame {
   width: 100%;
   border: 1px solid var(--ms-border);
-  border-left: 3px solid var(--ms-purple-line);
   border-radius: 0;
   background: var(--ms-surface);
   padding: 28px 32px 32px;
   gap: 22px;
-  box-shadow: var(--ms-shadow);
+  box-shadow: var(--ms-shadow), inset 0 2px 0 rgba(255, 255, 255, 0.92), inset 0 -1px 0 rgba(106, 97, 120, 0.04);
 }
 
 .console-home .console-frame::before,
@@ -2307,12 +2307,14 @@ body {
   margin-bottom: 16px;
   padding: 9px 18px 10px;
   border: 1px solid var(--home-brand-plate-border);
-  border-left: 3px solid var(--ms-purple-line);
   border-radius: var(--radius-sm);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, transparent 42%),
     linear-gradient(90deg, var(--home-brand-plate-1) 0%, var(--home-brand-plate-2) 38%, rgba(250, 249, 252, 0.96) 100%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 1px 2px rgba(91, 44, 145, 0.04);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 1px 2px rgba(74, 63, 88, 0.04),
+    inset 0 2px 0 rgba(106, 97, 120, 0.07);
 }
 
 .console-home .console-home-brand-plate {
@@ -2360,14 +2362,14 @@ body {
   margin: 0 1px;
   flex-shrink: 0;
   align-self: center;
-  background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.28), transparent);
+  background: linear-gradient(180deg, transparent, rgba(106, 97, 120, 0.28), transparent);
   border-radius: 0;
 }
 
 .console-home .console-home-brand-plate .console-brand-tag {
   margin: 0;
   border-radius: 999px;
-  border: 1px solid rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(106, 97, 120, 0.14);
   background: rgba(255, 255, 255, 0.42);
   color: var(--home-brand-plate-muted);
   font-weight: 600;
@@ -2423,7 +2425,7 @@ body {
   .console-home .console-home-top-auth {
     justify-content: flex-start;
     padding-top: 2px;
-    border-top: 1px solid rgba(124, 58, 237, 0.08);
+    border-top: 1px solid rgba(106, 97, 120, 0.1);
   }
 
   .console-home .console-home-top-auth .console-auth {
@@ -2470,10 +2472,10 @@ body {
 
 .console-home .console-panel-overline {
   display: block;
-  width: 32px;
+  width: 28px;
   height: 2px;
   margin: 6px 0 10px;
-  background: linear-gradient(90deg, var(--ms-purple-line), var(--home-accent-line-soft));
+  background: linear-gradient(90deg, #7d7688, rgba(125, 118, 136, 0.12));
   border-radius: 1px;
 }
 
@@ -2605,22 +2607,22 @@ body {
 .console-home .console-note {
   border-radius: 0;
   border: 1px solid var(--ms-border);
-  border-left: 2px solid var(--ms-purple-line);
-  background: var(--home-surface-muted);
+  border-top: 2px solid rgba(106, 97, 120, 0.28);
+  background: linear-gradient(180deg, rgba(249, 248, 251, 0.75) 0%, var(--home-surface-muted) 20px);
   box-shadow: none;
 }
 
 .console-home .console-note-warn {
   background: #fff9f5;
   border-color: #edebe9;
-  border-left-color: #ca5010;
+  border-top-color: #ca5010;
   color: #605e5c;
 }
 
 .console-home .console-note-ok {
   background: #f3faf4;
   border-color: #edebe9;
-  border-left-color: #107c10;
+  border-top-color: #107c10;
   color: #605e5c;
 }
 
@@ -2640,10 +2642,9 @@ body {
   display: block;
   overflow: hidden;
   border: 1px solid var(--ms-border);
-  border-left: 3px solid var(--ms-purple-line);
   background: var(--ms-surface);
   min-height: clamp(260px, 36vw, 360px);
-  box-shadow: var(--ms-shadow);
+  box-shadow: var(--ms-shadow), inset 0 2px 0 rgba(106, 97, 120, 0.05);
 }
 
 .console-home .console-hero-media {
@@ -2702,9 +2703,9 @@ body {
 
 .console-home .console-hero-overline {
   display: block;
-  width: 40px;
+  width: 36px;
   height: 2px;
-  background: linear-gradient(90deg, var(--ms-purple-line), var(--home-accent-line-soft));
+  background: linear-gradient(90deg, #7d7688, rgba(125, 118, 136, 0.12));
   border-radius: 1px;
 }
 
@@ -2806,7 +2807,7 @@ body {
 
 .toolbar {
   border-bottom: 1px solid var(--ms-border);
-  box-shadow: inset 0 -2px 0 rgba(124, 58, 237, 0.12);
+  box-shadow: inset 0 -2px 0 rgba(106, 97, 120, 0.08);
 }
 
 .toolbar-label {
@@ -2816,7 +2817,7 @@ body {
 .format-toolbar {
   background: #faf9f8;
   border-bottom: 1px solid var(--ms-border);
-  box-shadow: inset 0 -1px 0 rgba(124, 58, 237, 0.08);
+  box-shadow: inset 0 -1px 0 rgba(106, 97, 120, 0.06);
 }
 
 .trial-banner {
@@ -2826,13 +2827,15 @@ body {
 .trial-banner--warn {
   background: #fff4ce;
   color: #323130;
-  border-left: 3px solid #ca5010;
+  border-left: none;
+  border-top: 3px solid #ca5010;
 }
 
 .trial-banner--ok {
   background: #dff6dd;
   color: #323130;
-  border-left: 3px solid #107c10;
+  border-left: none;
+  border-top: 3px solid #107c10;
 }
 
 .canvas-wrap {
@@ -2841,17 +2844,15 @@ body {
 
 .hint-card {
   border: 1px solid var(--ms-border);
-  border-left: 3px solid var(--ms-purple-line);
   border-radius: 0;
-  background: var(--ms-surface);
-  box-shadow: var(--ms-shadow);
+  background: linear-gradient(180deg, #f9f8fb 0%, var(--ms-surface) 40%);
+  box-shadow: var(--ms-shadow), inset 0 2px 0 rgba(106, 97, 120, 0.05);
 }
 
 .canvas-empty-state {
   border-radius: 0;
   border: 1px dashed var(--ms-border);
-  border-left: 3px solid var(--ms-purple-line);
-  background: var(--ms-surface);
+  background: linear-gradient(180deg, #faf9fc 0%, var(--ms-surface) 36%);
   box-shadow: var(--ms-shadow);
 }
 
@@ -2934,7 +2935,7 @@ body {
   width: min(400px, 100%);
   background: #ffffff;
   border: 1px solid #edebe9;
-  border-left: 3px solid var(--ms-purple-line, #7c3aed);
+  border-top: 2px solid rgba(106, 97, 120, 0.38);
   box-shadow: 0 6.4px 14.4px rgba(0, 0, 0, 0.12);
   padding: 20px 22px 18px;
 }
@@ -2978,7 +2979,7 @@ body {
 }
 
 .editor-dialog-input:focus {
-  outline: 2px solid var(--ms-purple-line, #7c3aed);
+  outline: 2px solid var(--ms-purple-line, #6f6580);
   outline-offset: 1px;
 }
 
@@ -2995,7 +2996,7 @@ body {
 }
 
 .editor-dialog-textarea:focus {
-  outline: 2px solid var(--ms-purple-line, #7c3aed);
+  outline: 2px solid var(--ms-purple-line, #6f6580);
   outline-offset: 1px;
 }
 
@@ -3077,7 +3078,7 @@ body {
   color: var(--ms-text, #323130);
   background: #ffffff;
   border: 1px solid #edebe9;
-  border-left: 3px solid #107c10;
+  border-top: 3px solid #107c10;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   pointer-events: none;
 }
