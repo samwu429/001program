@@ -437,17 +437,19 @@ export function MindMapCanvas({ state, dispatch }: Props) {
           <div className="canvas-empty-sub">{t("emptyBoardSub")}</div>
         </div>
       )}
-      <div className="hint hint-card">
-        <div className="hint-title">{t("quickStart")}</div>
-        <div className="hint-chips">
-          <span className="hint-chip">{t("guideCreate")}</span>
-          <span className="hint-chip">{t("guidePan")}</span>
-          <span className="hint-chip">{t("guideLink")}</span>
-          <span className="hint-chip">{t("guideZoom")}</span>
-          <span className="hint-chip">{t("guideFormat")}</span>
-          <span className="hint-chip">{t("guideDelete")}</span>
+      {nodeOrder.length === 0 && (
+        <div className="hint hint-card">
+          <div className="hint-title">{t("quickStart")}</div>
+          <div className="hint-chips">
+            <span className="hint-chip">{t("guideCreate")}</span>
+            <span className="hint-chip">{t("guidePan")}</span>
+            <span className="hint-chip">{t("guideLink")}</span>
+            <span className="hint-chip">{t("guideZoom")}</span>
+            <span className="hint-chip">{t("guideFormat")}</span>
+            <span className="hint-chip">{t("guideDelete")}</span>
+          </div>
         </div>
-      </div>
+      )}
       <div className="canvas-controls" onPointerDown={(e) => e.stopPropagation()}>
         <div
           className="joypad"
