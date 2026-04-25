@@ -1948,7 +1948,36 @@ a.toolbar-btn.toolbar-btn-home {
 }
 
 .console-home .console-bottom-grid {
+  position: relative;
   gap: 20px;
+  padding: 10px 12px 8px;
+  background: linear-gradient(180deg, rgba(118, 106, 138, 0.06) 0%, rgba(118, 106, 138, 0.02) 40%, transparent 100%);
+  border-radius: var(--radius-lg);
+}
+
+.console-home .console-bottom-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgba(106, 97, 120, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+.console-home .console-bottom-grid .console-panel {
+  position: relative;
+  background: linear-gradient(180deg, #fcfbfe 0%, #f7f5fa 100%);
+  box-shadow: 0 6px 18px rgba(58, 50, 69, 0.05), inset 0 2px 0 rgba(118, 106, 138, 0.12);
+}
+
+.console-home .console-bottom-grid .console-panel::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(118, 106, 138, 0.35), rgba(118, 106, 138, 0));
 }
 
 .console-quick-list {
@@ -2541,9 +2570,9 @@ body {
 
 .console-home .console-card-index {
   border-radius: 0;
-  border: 1px solid var(--ms-border);
-  background: var(--ms-bg);
-  color: var(--ms-text-secondary);
+  border: 1px solid rgba(106, 97, 120, 0.16);
+  background: linear-gradient(180deg, #f6f3fa 0%, #efebf4 100%);
+  color: var(--ms-violet-note);
 }
 
 .console-home .home-btn {
@@ -3130,7 +3159,7 @@ body {
 .home-page .site-footer {
   margin-top: 16px;
   border-top: none;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(118, 106, 138, 0.05) 0%, rgba(118, 106, 138, 0.02) 55%, transparent 100%);
   padding-bottom: 8px;
   box-shadow: inset 0 1px 0 rgba(118, 106, 138, 0.12);
 }
