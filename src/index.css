@@ -2543,6 +2543,16 @@ body {
   background: var(--ms-surface);
 }
 
+/* Re-apply premium violet treatment for lower panels (overrides base panel skin) */
+.console-home .console-bottom-grid .console-panel {
+  border-color: rgba(106, 97, 120, 0.22);
+  background: linear-gradient(180deg, #fcfbfe 0%, #f7f5fa 100%);
+  box-shadow:
+    0 6px 18px rgba(58, 50, 69, 0.05),
+    inset 0 2px 0 rgba(118, 106, 138, 0.12),
+    inset 0 0 0 1px rgba(152, 141, 171, 0.16);
+}
+
 .console-home .console-card {
   border-radius: 0;
   border: 1px solid var(--ms-border);
