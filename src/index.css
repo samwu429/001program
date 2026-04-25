@@ -1951,7 +1951,7 @@ a.toolbar-btn.toolbar-btn-home {
   position: relative;
   gap: 20px;
   padding: 10px 12px 8px;
-  background: linear-gradient(180deg, rgba(118, 106, 138, 0.12) 0%, rgba(118, 106, 138, 0.04) 42%, transparent 100%);
+  background: linear-gradient(180deg, rgba(125, 98, 168, 0.18) 0%, rgba(125, 98, 168, 0.07) 42%, transparent 100%);
   border-radius: var(--radius-lg);
 }
 
@@ -1960,18 +1960,18 @@ a.toolbar-btn.toolbar-btn-home {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  border: 1px solid rgba(106, 97, 120, 0.16);
+  border: 1px solid rgba(116, 90, 156, 0.24);
   border-radius: var(--radius-lg);
 }
 
 .console-home .console-bottom-grid .console-panel {
   position: relative;
-  background: linear-gradient(180deg, #f9f6fd 0%, #f5f1fa 56%, #f2edf8 100%);
-  border-color: rgba(106, 97, 120, 0.34);
+  background: linear-gradient(180deg, #f7f1ff 0%, #f1e8fb 56%, #ece0f8 100%);
+  border-color: rgba(116, 90, 156, 0.42);
   box-shadow:
     0 8px 22px rgba(58, 50, 69, 0.08),
-    inset 0 2px 0 rgba(118, 106, 138, 0.2),
-    inset 0 0 0 1px rgba(152, 141, 171, 0.24);
+    inset 0 2px 0 rgba(126, 95, 170, 0.26),
+    inset 0 0 0 1px rgba(153, 121, 194, 0.3);
 }
 
 .console-home .console-bottom-grid .console-panel::after {
@@ -1981,7 +1981,7 @@ a.toolbar-btn.toolbar-btn-home {
   right: 18px;
   top: 0;
   height: 2px;
-  background: linear-gradient(90deg, rgba(118, 106, 138, 0.58), rgba(118, 106, 138, 0.08));
+  background: linear-gradient(90deg, rgba(126, 95, 170, 0.72), rgba(126, 95, 170, 0.14));
 }
 
 .console-quick-list {
@@ -2545,12 +2545,12 @@ body {
 
 /* Re-apply premium violet treatment for lower panels (overrides base panel skin) */
 .console-home .console-bottom-grid .console-panel {
-  border-color: rgba(106, 97, 120, 0.34);
-  background: linear-gradient(180deg, #f9f6fd 0%, #f5f1fa 56%, #f2edf8 100%);
+  border-color: rgba(116, 90, 156, 0.42);
+  background: linear-gradient(180deg, #f7f1ff 0%, #f1e8fb 56%, #ece0f8 100%);
   box-shadow:
     0 8px 22px rgba(58, 50, 69, 0.08),
-    inset 0 2px 0 rgba(118, 106, 138, 0.2),
-    inset 0 0 0 1px rgba(152, 141, 171, 0.24);
+    inset 0 2px 0 rgba(126, 95, 170, 0.26),
+    inset 0 0 0 1px rgba(153, 121, 194, 0.3);
 }
 
 .console-home .console-card {
@@ -2584,9 +2584,9 @@ body {
 
 .console-home .console-card-index {
   border-radius: 0;
-  border: 1px solid rgba(106, 97, 120, 0.16);
-  background: linear-gradient(180deg, #f6f3fa 0%, #efebf4 100%);
-  color: var(--ms-violet-note);
+  border: 1px solid rgba(116, 90, 156, 0.24);
+  background: linear-gradient(180deg, #efe6fb 0%, #e5d8f5 100%);
+  color: #5f4781;
 }
 
 .console-home .home-btn {
