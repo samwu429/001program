@@ -2295,11 +2295,11 @@ header.toolbar button.toolbar-btn.toolbar-btn--danger {
   --home-accent-line: #6a6178;
   --home-accent-line-soft: rgba(106, 97, 120, 0.32);
   --home-surface-muted: #faf9f8;
-  /* Title strip: cool neutral-lavender */
-  --home-brand-plate-1: #f9f8fb;
-  --home-brand-plate-2: #f1eff5;
-  --home-brand-plate-3: #eae8ef;
-  --home-brand-plate-border: rgba(106, 97, 120, 0.14);
+  /* Title strip: grayscale base with slight violet tint */
+  --home-brand-plate-1: #f4f4f6;
+  --home-brand-plate-2: #ececf0;
+  --home-brand-plate-3: #e3e1e8;
+  --home-brand-plate-border: rgba(106, 97, 120, 0.22);
   --home-brand-plate-ink: #2a2438;
   --home-brand-plate-muted: #5c4f72;
   /* Editorial violet (ink + mist)—human, not neon */
@@ -2350,13 +2350,14 @@ body {
   border: 1px solid var(--home-brand-plate-border);
   border-radius: var(--radius-sm);
   background:
-    radial-gradient(130% 220% at 0% -30%, rgba(118, 106, 138, 0.09), transparent 48%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, transparent 42%),
-    linear-gradient(90deg, var(--home-brand-plate-1) 0%, var(--home-brand-plate-2) 38%, rgba(250, 249, 252, 0.96) 100%);
+    radial-gradient(120% 200% at 0% -26%, rgba(126, 95, 170, 0.12), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.08) 46%),
+    linear-gradient(92deg, var(--home-brand-plate-1) 0%, var(--home-brand-plate-2) 42%, var(--home-brand-plate-3) 100%);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.75) inset,
-    0 1px 2px rgba(74, 63, 88, 0.04),
-    inset 0 2px 0 rgba(106, 97, 120, 0.07);
+    0 1px 0 rgba(255, 255, 255, 0.82) inset,
+    0 1px 3px rgba(55, 50, 62, 0.08),
+    inset 0 2px 0 rgba(126, 95, 170, 0.12),
+    inset 0 -1px 0 rgba(89, 80, 103, 0.08);
 }
 
 .console-home .console-home-brand-plate {
@@ -2411,8 +2412,8 @@ body {
 .console-home .console-home-brand-plate .console-brand-tag {
   margin: 0;
   border-radius: 999px;
-  border: 1px solid rgba(106, 97, 120, 0.14);
-  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(106, 97, 120, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(236, 232, 245, 0.72));
   color: var(--home-brand-plate-muted);
   font-weight: 600;
   text-transform: uppercase;
