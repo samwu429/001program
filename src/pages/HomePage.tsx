@@ -110,14 +110,16 @@ export function HomePage() {
 
   return (
     <div className="home-page home-shell console-home">
-      <div className="console-frame">
-        <header className="console-header">
+      <header className="console-home-top">
+        <div className="console-home-brand-plate">
           <div className="console-brand">
             <p className="console-brand-kicker">{t("homeBrandKicker")}</p>
             <span className="console-brand-overline" aria-hidden />
             <p className="console-brand-tag">{t("brand")}</p>
             <h1 className="home-title">{t("appTitle")}</h1>
           </div>
+        </div>
+        <div className="console-home-top-auth">
           <div className="console-auth">
             <button type="button" className="home-btn home-btn-metal" onClick={() => setLang(lang === "en" ? "zh" : "en")}>
               {t("language")} {lang === "en" ? t("chinese") : t("english")}
@@ -138,8 +140,10 @@ export function HomePage() {
               </>
             )}
           </div>
-        </header>
+        </div>
+      </header>
 
+      <div className="console-frame">
         <div className="console-control-strip">
           <button type="button" className="home-btn home-btn-wood" onClick={() => void onNew()}>
             {t("newCanvas")}
